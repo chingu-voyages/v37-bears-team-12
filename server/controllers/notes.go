@@ -25,3 +25,16 @@ func FindNotes(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": notes})
 }
+
+// GET /notes/:id
+// Find a note
+func FindNote(c *gin.Context) {
+	// Get model if exist
+	var note models.Note
+	if err := models.DB.Where("id = ?", c.Param("id")).First(&note).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": note})
+}
