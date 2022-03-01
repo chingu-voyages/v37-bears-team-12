@@ -79,3 +79,18 @@ func UpdateNote(c *gin.Context) {
 	// ERROR: Note is updated in DB but not returning data in response which leads to infinite response time for some reason
 	c.JSON(http.StatusOK, gin.H{"data": note})
 }
+
+// DELETE /notes/:id
+// Delete a note
+func DeleteNote(c *gin.Context) {
+	// Get model if exist
+	var note models.Note
+	if err := models.DB.Where("id = ?", c.Param("id")).First(&note).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+
+	models.DB.Delete(&note)
+
+	c.JSON(http.StatusOK, gin.H{"data": true})
+}

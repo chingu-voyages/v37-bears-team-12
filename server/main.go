@@ -18,7 +18,7 @@ func main() {
 	r.GET("/notes/:id", controllers.FindNote)
 	r.POST("/notes", controllers.CreateNote)
 	r.PATCH("/notes/:id", controllers.UpdateNote)
-	// r.DELETE("/books/:id", controllers.DeleteBook)
+	r.DELETE("/notes/:id", controllers.DeleteNote)
 
 	// Run the server
 	r.Run()
