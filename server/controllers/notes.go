@@ -50,9 +50,32 @@ func CreateNote(c *gin.Context) {
 		return
 	}
 
-	// Create book
+	// Create note
 	note := models.Note{Title: input.Title, Content: input.Content, UserID: input.UserID}
 	models.DB.Create(&note)
 
+	c.JSON(http.StatusOK, gin.H{"data": note})
+}
+
+// PATCH /notes/:id
+// Update a note
+func UpdateNote(c *gin.Context) {
+	// Get model if exist
+	var note models.Note
+	if err := models.DB.Where("id = ?", c.Param("id")).First(&note).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+
+	// Validate input
+	var input UpdateNoteInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	models.DB.Model(&note).Updates(models.Note{Title: input.Title, Content: input.Content})
+
+	// ERROR: Note is updated in DB but not returning data in response which leads to infinite response time for some reason
 	c.JSON(http.StatusOK, gin.H{"data": note})
 }
