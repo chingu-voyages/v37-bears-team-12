@@ -7,14 +7,15 @@ import (
 	"github.com/rahmanfadhil/gin-bookstore/models"
 )
 
-type CreateBookInput struct {
-	Title  string `json:"title" binding:"required"`
-	Author string `json:"author" binding:"required"`
+type CreateNoteInput struct {
+	Title   string `json:"title" binding:"required"`
+	Content string `json:"content" binding:"required"`
+	UserID  int8   `json:"user_id" binding:"required"`
 }
 
-type UpdateBookInput struct {
-	Title  string `json:"title"`
-	Author string `json:"author"`
+type UpdateNoteInput struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
 }
 
 // GET /notes
@@ -35,6 +36,23 @@ func FindNote(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
+
+	c.JSON(http.StatusOK, gin.H{"data": note})
+}
+
+// POST /notes
+// Create new note
+func CreateNote(c *gin.Context) {
+	// Validate input
+	var input CreateNoteInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Create book
+	note := models.Note{Title: input.Title, Content: input.Content, UserID: input.UserID}
+	models.DB.Create(&note)
 
 	c.JSON(http.StatusOK, gin.H{"data": note})
 }

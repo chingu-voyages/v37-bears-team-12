@@ -16,7 +16,7 @@ func main() {
 	// Routes
 	r.GET("/notes", controllers.FindNotes)
 	r.GET("/notes/:id", controllers.FindNote)
-	// r.POST("/books", controllers.CreateBook)
+	r.POST("/notes", controllers.CreateNote)
 	// r.PATCH("/books/:id", controllers.UpdateBook)
 	// r.DELETE("/books/:id", controllers.DeleteBook)
 
