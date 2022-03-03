@@ -11,9 +11,9 @@ export default function NotesCard({ id, title, created_at, content }) {
     date = date.toLocaleDateString("en-US");
     
     return (
-        <div key={id} className="my-5 m-3 p-3 mx-auto w-11/12 bg-gray-500 hover:bg-gray-700 hover:scale-105 hover:text-white rounded-2xl">
-            <h2 className="font-bold text-lg">{title}</h2>
-            <h3 className="font-semibold">{date}</h3>
+        <div className="my-5 m-3 p-3 mx-auto w-11/12 bg-gray-500 hover:bg-gray-700 hover:scale-105 hover:text-white rounded-2xl">
+            <h2 className="font-bold text-lg">Title: {title}</h2>
+            <h3 className="font-semibold">Date: {date}</h3>
             <p>{contentPreview}</p>
         </div>
     );
