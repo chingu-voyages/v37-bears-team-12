@@ -3,7 +3,7 @@ import { HomeIcon, DocumentIcon, DocumentAddIcon, InformationCircleIcon, LogoutI
 
 export default function TempNavBar() {
     return (
-        <aside className="content-between md:h-screen md:w-2/12 bg-[#A49EA2]">
+        <aside className="content-between md:w-2/12 bg-[#A49EA2]">
             <div className="text-white flex flex-col">
                 <h2 className="text-3xl mb-4 ml-4 mt-6">Whatever Note</h2>
                 <h3 className="mb-4 text-2xl ml-4 ">User Name</h3>
