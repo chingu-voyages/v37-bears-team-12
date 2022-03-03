@@ -2,7 +2,9 @@ import GreetingDate from "../components/greetingDate";
 import NotesCard from "../components/notesCard";
 import TempNavBar from "../components/tempNavBar";
 
-export default function notes() {
+export default function notes({ data }) {
+    const notes = data;
+    
     return (
         <div className="flex flex-col md:flex-row">
             <TempNavBar />
@@ -14,52 +16,36 @@ export default function notes() {
                     Notes
                 </h1>
                 <section className="bg-white w-11/12 opacity-75 rounded-3xl mx-auto mt-10 p-3">
-                    <NotesCard
-                        id={1}
-                        created_at={"2022-03-01T14:19:56.742327+00:00"}
-                        title={"First Class Notes"}
-                        content={
-                            "Cells can be thought of as building blocks of organisms. Some organisms are composed of a single cell. Others, like ourselves, are composed of millions of cells that work together to perform the more complex functions that make us different from bacteria. It is difficult to imagine that humans are descendants of a single cell, but this is a common belief in the scientific world."
-                        }
-                    />
+                   
+                    {notes.map(note => (
+                        <NotesCard
+                            key={note.id}
+                            id={note.id}
+                            created_at={note.created_at}
+                            title={note.title}
+                            content={note.content}
+                        />
+                    ))}
 
-                    <NotesCard
-                        id={2}
-                        created_at={"May 20, 2022"}
-                        title={"First Class Notes"}
-                        content={
-                            "Before we can understand how multiple cells can work together to create complex biological functions, it is necessary to understand what biological functions single cells are capable of performing on their own to sustain life."
-                        }
-                    />
-
-                    <NotesCard
-                        id={3}
-                        created_at={"May 20, 2022"}
-                        title={"First Class Notes"}
-                        content={
-                            "Cells can be thought of as building blocks of organisms. Some organisms are composed of a single cell. Others, like ourselves are made up of many."
-                        }
-                    />
-
-                    <NotesCard
-                        id={4}
-                        created_at={"May 20, 2022"}
-                        title={"First Class Notes"}
-                        content={
-                            "Some organisms are composed of a single cell. Others, like ourselves, are composed of millions of cells that work together to perform the more complex functions that make us different from bacteria. It is difficult to imagine that humans are descendants of a single cell, but this is a common belief in the scientific world. Before we can understand how multiple cells can work together to create complex biological functions, it is necessary to understand what biological functions single cells are capable of performing on their own to sustain life"
-                        }
-                    />
-
-                    <NotesCard
-                        id={5}
-                        created_at={"May 20, 2022"}
-                        title={"First Class Notes"}
-                        content={
-                            "All living organisms are composed of cells. A cell is a small, membrane-bound compartment that contains all the chemicals and molecules that help support an organism's life. An understanding of the structure of cells is one of the first steps in comprehending the complex cellular interactions that direct and produce life"
-                        }
-                    />
                 </section>
             </main>
         </div>
     );
+}
+
+export async function getServerSideProps(context) {
+    // Fetch data from external API
+    const res = await fetch(
+        `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`,
+        {
+            method: "GET",
+            headers: {
+                apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3bnh4eGhkY2dld2x2bXB3ZGtsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDU1NTk1NDUsImV4cCI6MTk2MTEzNTU0NX0.TefHcTpo86yLHluNIrAOZEEdIb4ZUkHVvm_6MTtNp8c",
+            },
+        }
+    );
+    const data = await res.json();
+
+    // Pass data to the page via props
+    return { props: { data } };
 }
