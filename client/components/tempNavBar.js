@@ -14,7 +14,9 @@ export default function TempNavBar() {
                     <Link href="/notes">
                         <a className="underline pl-4 mb-3 text-lg h-11 rounded-lg flex items-center hover:bg-black hover:opacity-25"><DocumentIcon className="h-6 w-6 mr-2"/>Notes</a>
                     </Link>
-                    <li className="pl-4 mb-3 text-lg h-11 rounded-lg flex items-center hover:bg-black hover:opacity-25"><DocumentAddIcon className="h-6 w-6 mr-2"/>Add a Note</li>
+                    <Link href='/edit'>
+                        <a className="underline pl-4 mb-3 text-lg h-11 rounded-lg flex items-center hover:bg-black hover:opacity-25"><DocumentAddIcon className="h-6 w-6 mr-2"/>Add a Note</a>
+                    </Link>
                     <Link href="/about">
                         <a className="underline pl-4 mb-3 text-lg h-11 rounded-lg flex items-center hover:bg-black hover:opacity-25"><InformationCircleIcon className="h-6 w-6 mr-2 "/>About</a>
                     </Link>
