@@ -12,11 +12,11 @@ export default function edit() {
 
     return (
         
-        <div className="flex flex-col md:flex-row w-full">
+        <div className="flex flex-col md:flex-row">
             <TempNavBar />
             <main className='w-full'>
-                <div className='h-screen w-max w-full'>
-                    <div ref={quillRef} />
+                <div className='h-screen w-full'>
+                    <div ref={quillRef} className='w-full'/>
                 </div>
             </main>
         </div>
