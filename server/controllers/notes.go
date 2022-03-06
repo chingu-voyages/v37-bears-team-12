@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"notes-app/database"
@@ -11,7 +12,6 @@ import (
 type CreateNoteInput struct {
 	Title   string `json:"title" binding:"required"`
 	Content string `json:"content" binding:"required"`
-	UserID  int8   `json:"user_id" binding:"required"`
 }
 
 type UpdateNoteInput struct {
@@ -40,8 +40,27 @@ func FindNote(c *gin.Context) {
 // POST /notes
 // Create new note
 func CreateNote(c *gin.Context) {
+	var input CreateNoteInput
 
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	fmt.Print(input)
+
+	// Create note
+	note, err := database.CLIENT.Note.
+		Create().
+		SetTitle(input.Title).
+		SetContent(input.Content).
+		Save(c)
+
+	if err != nil {
+		log.Fatalf("Failed creating a note: %v", err)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": note})
 }
 
 // PATCH /notes/:id
