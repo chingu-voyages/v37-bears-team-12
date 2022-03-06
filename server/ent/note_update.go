@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"notes-app/ent/note"
 	"notes-app/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -27,6 +28,32 @@ func (nu *NoteUpdate) Where(ps ...predicate.Note) *NoteUpdate {
 	return nu
 }
 
+// SetTitle sets the "title" field.
+func (nu *NoteUpdate) SetTitle(s string) *NoteUpdate {
+	nu.mutation.SetTitle(s)
+	return nu
+}
+
+// SetContent sets the "content" field.
+func (nu *NoteUpdate) SetContent(s string) *NoteUpdate {
+	nu.mutation.SetContent(s)
+	return nu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (nu *NoteUpdate) SetUpdatedAt(t time.Time) *NoteUpdate {
+	nu.mutation.SetUpdatedAt(t)
+	return nu
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (nu *NoteUpdate) SetNillableUpdatedAt(t *time.Time) *NoteUpdate {
+	if t != nil {
+		nu.SetUpdatedAt(*t)
+	}
+	return nu
+}
+
 // Mutation returns the NoteMutation object of the builder.
 func (nu *NoteUpdate) Mutation() *NoteMutation {
 	return nu.mutation
@@ -39,12 +66,18 @@ func (nu *NoteUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(nu.hooks) == 0 {
+		if err = nu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = nu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*NoteMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = nu.check(); err != nil {
+				return 0, err
 			}
 			nu.mutation = mutation
 			affected, err = nu.sqlSave(ctx)
@@ -86,6 +119,21 @@ func (nu *NoteUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (nu *NoteUpdate) check() error {
+	if v, ok := nu.mutation.Title(); ok {
+		if err := note.TitleValidator(v); err != nil {
+			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Note.title": %w`, err)}
+		}
+	}
+	if v, ok := nu.mutation.Content(); ok {
+		if err := note.ContentValidator(v); err != nil {
+			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Note.content": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (nu *NoteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -104,6 +152,27 @@ func (nu *NoteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := nu.mutation.Title(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: note.FieldTitle,
+		})
+	}
+	if value, ok := nu.mutation.Content(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: note.FieldContent,
+		})
+	}
+	if value, ok := nu.mutation.UpdatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: note.FieldUpdatedAt,
+		})
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, nu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{note.Label}
@@ -121,6 +190,32 @@ type NoteUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *NoteMutation
+}
+
+// SetTitle sets the "title" field.
+func (nuo *NoteUpdateOne) SetTitle(s string) *NoteUpdateOne {
+	nuo.mutation.SetTitle(s)
+	return nuo
+}
+
+// SetContent sets the "content" field.
+func (nuo *NoteUpdateOne) SetContent(s string) *NoteUpdateOne {
+	nuo.mutation.SetContent(s)
+	return nuo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (nuo *NoteUpdateOne) SetUpdatedAt(t time.Time) *NoteUpdateOne {
+	nuo.mutation.SetUpdatedAt(t)
+	return nuo
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (nuo *NoteUpdateOne) SetNillableUpdatedAt(t *time.Time) *NoteUpdateOne {
+	if t != nil {
+		nuo.SetUpdatedAt(*t)
+	}
+	return nuo
 }
 
 // Mutation returns the NoteMutation object of the builder.
@@ -142,12 +237,18 @@ func (nuo *NoteUpdateOne) Save(ctx context.Context) (*Note, error) {
 		node *Note
 	)
 	if len(nuo.hooks) == 0 {
+		if err = nuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = nuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*NoteMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = nuo.check(); err != nil {
+				return nil, err
 			}
 			nuo.mutation = mutation
 			node, err = nuo.sqlSave(ctx)
@@ -189,6 +290,21 @@ func (nuo *NoteUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (nuo *NoteUpdateOne) check() error {
+	if v, ok := nuo.mutation.Title(); ok {
+		if err := note.TitleValidator(v); err != nil {
+			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Note.title": %w`, err)}
+		}
+	}
+	if v, ok := nuo.mutation.Content(); ok {
+		if err := note.ContentValidator(v); err != nil {
+			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Note.content": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (nuo *NoteUpdateOne) sqlSave(ctx context.Context) (_node *Note, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -223,6 +339,27 @@ func (nuo *NoteUpdateOne) sqlSave(ctx context.Context) (_node *Note, err error) 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := nuo.mutation.Title(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: note.FieldTitle,
+		})
+	}
+	if value, ok := nuo.mutation.Content(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: note.FieldContent,
+		})
+	}
+	if value, ok := nuo.mutation.UpdatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: note.FieldUpdatedAt,
+		})
 	}
 	_node = &Note{config: nuo.config}
 	_spec.Assign = _node.assignValues

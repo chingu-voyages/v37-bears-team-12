@@ -2,7 +2,7 @@ package main
 
 import (
 	"notes-app/controllers"
-	"notes-app/models"
+	"notes-app/database"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,7 +11,7 @@ func main() {
 	r := gin.Default()
 
 	// Connect to database
-	models.ConnectDatabase()
+	database.ConnectDatabase()
 
 	// Routes
 	r.GET("/notes", controllers.FindNotes)

@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
+	"notes-app/database"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +22,13 @@ type UpdateNoteInput struct {
 // GET /notes
 // Find all notes
 func FindNotes(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	items, err := database.CLIENT.Note.Query().All(c)
+
+	if err != nil {
+		log.Fatalf("Error occurred")
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": items})
 }
 
 // GET /notes/:id
@@ -32,6 +40,7 @@ func FindNote(c *gin.Context) {
 // POST /notes
 // Create new note
 func CreateNote(c *gin.Context) {
+
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }
 

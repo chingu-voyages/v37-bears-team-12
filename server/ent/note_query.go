@@ -250,6 +250,19 @@ func (nq *NoteQuery) Clone() *NoteQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		Title string `json:"title,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Note.Query().
+//		GroupBy(note.FieldTitle).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
+//
 func (nq *NoteQuery) GroupBy(field string, fields ...string) *NoteGroupBy {
 	group := &NoteGroupBy{config: nq.config}
 	group.fields = append([]string{field}, fields...)
@@ -264,6 +277,17 @@ func (nq *NoteQuery) GroupBy(field string, fields ...string) *NoteGroupBy {
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		Title string `json:"title,omitempty"`
+//	}
+//
+//	client.Note.Query().
+//		Select(note.FieldTitle).
+//		Scan(ctx, &v)
+//
 func (nq *NoteQuery) Select(fields ...string) *NoteSelect {
 	nq.fields = append(nq.fields, fields...)
 	return &NoteSelect{NoteQuery: nq}

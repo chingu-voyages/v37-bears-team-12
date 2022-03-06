@@ -2,8 +2,32 @@
 
 package ent
 
+import (
+	"notes-app/ent/note"
+	"notes-app/ent/schema"
+	"time"
+)
+
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	noteFields := schema.Note{}.Fields()
+	_ = noteFields
+	// noteDescTitle is the schema descriptor for title field.
+	noteDescTitle := noteFields[0].Descriptor()
+	// note.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	note.TitleValidator = noteDescTitle.Validators[0].(func(string) error)
+	// noteDescContent is the schema descriptor for content field.
+	noteDescContent := noteFields[1].Descriptor()
+	// note.ContentValidator is a validator for the "content" field. It is called by the builders before save.
+	note.ContentValidator = noteDescContent.Validators[0].(func(string) error)
+	// noteDescCreatedAt is the schema descriptor for created_at field.
+	noteDescCreatedAt := noteFields[2].Descriptor()
+	// note.DefaultCreatedAt holds the default value on creation for the created_at field.
+	note.DefaultCreatedAt = noteDescCreatedAt.Default.(func() time.Time)
+	// noteDescUpdatedAt is the schema descriptor for updated_at field.
+	noteDescUpdatedAt := noteFields[3].Descriptor()
+	// note.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	note.DefaultUpdatedAt = noteDescUpdatedAt.Default.(func() time.Time)
 }

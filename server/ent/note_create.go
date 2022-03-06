@@ -4,8 +4,10 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"notes-app/ent/note"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -16,6 +18,46 @@ type NoteCreate struct {
 	config
 	mutation *NoteMutation
 	hooks    []Hook
+}
+
+// SetTitle sets the "title" field.
+func (nc *NoteCreate) SetTitle(s string) *NoteCreate {
+	nc.mutation.SetTitle(s)
+	return nc
+}
+
+// SetContent sets the "content" field.
+func (nc *NoteCreate) SetContent(s string) *NoteCreate {
+	nc.mutation.SetContent(s)
+	return nc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (nc *NoteCreate) SetCreatedAt(t time.Time) *NoteCreate {
+	nc.mutation.SetCreatedAt(t)
+	return nc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (nc *NoteCreate) SetNillableCreatedAt(t *time.Time) *NoteCreate {
+	if t != nil {
+		nc.SetCreatedAt(*t)
+	}
+	return nc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (nc *NoteCreate) SetUpdatedAt(t time.Time) *NoteCreate {
+	nc.mutation.SetUpdatedAt(t)
+	return nc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (nc *NoteCreate) SetNillableUpdatedAt(t *time.Time) *NoteCreate {
+	if t != nil {
+		nc.SetUpdatedAt(*t)
+	}
+	return nc
 }
 
 // Mutation returns the NoteMutation object of the builder.
@@ -29,6 +71,7 @@ func (nc *NoteCreate) Save(ctx context.Context) (*Note, error) {
 		err  error
 		node *Note
 	)
+	nc.defaults()
 	if len(nc.hooks) == 0 {
 		if err = nc.check(); err != nil {
 			return nil, err
@@ -86,8 +129,42 @@ func (nc *NoteCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (nc *NoteCreate) defaults() {
+	if _, ok := nc.mutation.CreatedAt(); !ok {
+		v := note.DefaultCreatedAt()
+		nc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := nc.mutation.UpdatedAt(); !ok {
+		v := note.DefaultUpdatedAt()
+		nc.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (nc *NoteCreate) check() error {
+	if _, ok := nc.mutation.Title(); !ok {
+		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "Note.title"`)}
+	}
+	if v, ok := nc.mutation.Title(); ok {
+		if err := note.TitleValidator(v); err != nil {
+			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Note.title": %w`, err)}
+		}
+	}
+	if _, ok := nc.mutation.Content(); !ok {
+		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Note.content"`)}
+	}
+	if v, ok := nc.mutation.Content(); ok {
+		if err := note.ContentValidator(v); err != nil {
+			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Note.content": %w`, err)}
+		}
+	}
+	if _, ok := nc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Note.created_at"`)}
+	}
+	if _, ok := nc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Note.updated_at"`)}
+	}
 	return nil
 }
 
@@ -115,6 +192,38 @@ func (nc *NoteCreate) createSpec() (*Note, *sqlgraph.CreateSpec) {
 			},
 		}
 	)
+	if value, ok := nc.mutation.Title(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: note.FieldTitle,
+		})
+		_node.Title = value
+	}
+	if value, ok := nc.mutation.Content(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: note.FieldContent,
+		})
+		_node.Content = value
+	}
+	if value, ok := nc.mutation.CreatedAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: note.FieldCreatedAt,
+		})
+		_node.CreatedAt = value
+	}
+	if value, ok := nc.mutation.UpdatedAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: note.FieldUpdatedAt,
+		})
+		_node.UpdatedAt = value
+	}
 	return _node, _spec
 }
 
@@ -132,6 +241,7 @@ func (ncb *NoteCreateBulk) Save(ctx context.Context) ([]*Note, error) {
 	for i := range ncb.builders {
 		func(i int, root context.Context) {
 			builder := ncb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*NoteMutation)
 				if !ok {

@@ -1,12 +1,12 @@
-package models
+package database
 
 import (
 	"context"
 	"fmt"
 	"log"
+	"notes-app/ent"
 	"os"
 
-	"entgo.io/ent/examples/fs/ent"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -27,8 +27,8 @@ func ConnectDatabase() {
 
 	CLIENT = client
 
-	// Run the auto migration tool
+	// Run the auto migration tool.
 	if err := client.Schema.Create(context.Background()); err != nil {
-		log.Fatalf("Failed when creating schema resources: %v", err)
+		log.Fatalf("failed creating schema resources: %v", err)
 	}
 }
