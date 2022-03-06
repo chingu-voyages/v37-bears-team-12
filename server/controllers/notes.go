@@ -79,7 +79,26 @@ func CreateNote(c *gin.Context) {
 // PATCH /notes/:id
 // Update a note
 func UpdateNote(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	id, paramErr := strconv.Atoi(c.Param("id"))
+
+	if paramErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
+	}
+
+	var input CreateNoteInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	note, _ := database.CLIENT.Note.Update().
+		SetTitle(input.Title).
+		SetContent(input.Content).
+		Where(note.ID(id)).
+		Save(context.Background())
+
+	c.JSON(http.StatusOK, gin.H{"data": note})
 }
 
 // DELETE /notes/:id
