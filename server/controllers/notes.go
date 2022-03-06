@@ -1,10 +1,13 @@
 package controllers
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"notes-app/database"
+	"notes-app/ent/note"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,7 +37,17 @@ func FindNotes(c *gin.Context) {
 // GET /notes/:id
 // Find a note
 func FindNote(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
+	}
+
+	note, _ := database.CLIENT.Note.Query().
+		Where(note.ID(id)).
+		First(context.Background())
+
+	c.JSON(http.StatusOK, gin.H{"data": note})
 }
 
 // POST /notes
