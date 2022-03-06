@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/rahmanfadhil/gin-bookstore/controllers"
-	"github.com/rahmanfadhil/gin-bookstore/models"
+	"notes-app/controllers"
+	"notes-app/models"
 
 	"github.com/gin-gonic/gin"
 )

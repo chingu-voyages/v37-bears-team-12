@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rahmanfadhil/gin-bookstore/models"
 )
 
 type CreateNoteInput struct {
@@ -21,76 +20,29 @@ type UpdateNoteInput struct {
 // GET /notes
 // Find all notes
 func FindNotes(c *gin.Context) {
-	var notes []models.Note
-	models.DB.Find(&notes)
-
-	c.JSON(http.StatusOK, gin.H{"data": notes})
+	c.JSON(http.StatusOK, gin.H{"data": true})
 }
 
 // GET /notes/:id
 // Find a note
 func FindNote(c *gin.Context) {
-	// Get model if exist
-	var note models.Note
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&note).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": note})
+	c.JSON(http.StatusOK, gin.H{"data": true})
 }
 
 // POST /notes
 // Create new note
 func CreateNote(c *gin.Context) {
-	// Validate input
-	var input CreateNoteInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// Create note
-	note := models.Note{Title: input.Title, Content: input.Content, UserID: input.UserID}
-	models.DB.Create(&note)
-
-	c.JSON(http.StatusOK, gin.H{"data": note})
+	c.JSON(http.StatusOK, gin.H{"data": true})
 }
 
 // PATCH /notes/:id
 // Update a note
 func UpdateNote(c *gin.Context) {
-	// Get model if exist
-	var note models.Note
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&note).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-		return
-	}
-
-	// Validate input
-	var input UpdateNoteInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	models.DB.Model(&note).Updates(models.Note{Title: input.Title, Content: input.Content})
-
-	// ERROR: Note is updated in DB but not returning data in response which leads to infinite response time for some reason
-	c.JSON(http.StatusOK, gin.H{"data": note})
+	c.JSON(http.StatusOK, gin.H{"data": true})
 }
 
 // DELETE /notes/:id
 // Delete a note
 func DeleteNote(c *gin.Context) {
-	// Get model if exist
-	var note models.Note
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&note).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-		return
-	}
-
-	models.DB.Delete(&note)
-
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

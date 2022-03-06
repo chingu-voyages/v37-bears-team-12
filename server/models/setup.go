@@ -1,27 +1,34 @@
 package models
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"os"
 
+	"entgo.io/ent/examples/fs/ent"
 	"github.com/joho/godotenv"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	_ "github.com/lib/pq"
 )
 
-var DB *gorm.DB
+var CLIENT *ent.Client
 
 func ConnectDatabase() {
 	godotenv.Load()
-	dsn := os.Getenv("DB_CONNECTION_STRING")
-	fmt.Println(dsn)
-	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	DB_CONNECTION_STRING := os.Getenv("DB_CONNECTION_STRING")
+	fmt.Println(DB_CONNECTION_STRING)
+	// Init PostgreSQL
+	client, err := ent.Open("postgres", DB_CONNECTION_STRING)
 
 	if err != nil {
-		panic("Failed to connect to database!")
+		log.Fatal(err)
+		return
 	}
 
-	database.AutoMigrate(&Note{})
+	CLIENT = client
 
-	DB = database
+	// Run the auto migration tool
+	if err := client.Schema.Create(context.Background()); err != nil {
+		log.Fatalf("Failed when creating schema resources: %v", err)
+	}
 }
