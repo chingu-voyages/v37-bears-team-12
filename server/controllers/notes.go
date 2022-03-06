@@ -104,5 +104,18 @@ func UpdateNote(c *gin.Context) {
 // DELETE /notes/:id
 // Delete a note
 func DeleteNote(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
+	}
+
+	note := database.CLIENT.Note.DeleteOneID(id).Exec(c)
+	result := fmt.Sprintf("%v", note)
+
+	if result == "<nil>" {
+		c.JSON(http.StatusOK, gin.H{"data": "Note deleted successfully!"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"data": "Note not found"})
+	}
 }
