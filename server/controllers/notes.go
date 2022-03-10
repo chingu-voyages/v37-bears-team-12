@@ -1,16 +1,20 @@
 package controllers
 
 import (
+	"context"
+	"fmt"
+	"log"
 	"net/http"
+	"notes-app/database"
+	"notes-app/ent/note"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rahmanfadhil/gin-bookstore/models"
 )
 
 type CreateNoteInput struct {
 	Title   string `json:"title" binding:"required"`
 	Content string `json:"content" binding:"required"`
-	UserID  int8   `json:"user_id" binding:"required"`
 }
 
 type UpdateNoteInput struct {
@@ -21,21 +25,27 @@ type UpdateNoteInput struct {
 // GET /notes
 // Find all notes
 func FindNotes(c *gin.Context) {
-	var notes []models.Note
-	models.DB.Find(&notes)
+	items, err := database.CLIENT.Note.Query().All(c)
 
-	c.JSON(http.StatusOK, gin.H{"data": notes})
+	if err != nil {
+		log.Fatalf("Error occurred")
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": items})
 }
 
 // GET /notes/:id
 // Find a note
 func FindNote(c *gin.Context) {
-	// Get model if exist
-	var note models.Note
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&note).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-		return
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
 	}
+
+	note, _ := database.CLIENT.Note.Query().
+		Where(note.ID(id)).
+		First(context.Background())
 
 	c.JSON(http.StatusOK, gin.H{"data": note})
 }
@@ -43,16 +53,25 @@ func FindNote(c *gin.Context) {
 // POST /notes
 // Create new note
 func CreateNote(c *gin.Context) {
-	// Validate input
 	var input CreateNoteInput
+
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	fmt.Print(input)
+
 	// Create note
-	note := models.Note{Title: input.Title, Content: input.Content, UserID: input.UserID}
-	models.DB.Create(&note)
+	note, err := database.CLIENT.Note.
+		Create().
+		SetTitle(input.Title).
+		SetContent(input.Content).
+		Save(c)
+
+	if err != nil {
+		log.Fatalf("Failed creating a note: %v", err)
+	}
 
 	c.JSON(http.StatusOK, gin.H{"data": note})
 }
@@ -60,37 +79,43 @@ func CreateNote(c *gin.Context) {
 // PATCH /notes/:id
 // Update a note
 func UpdateNote(c *gin.Context) {
-	// Get model if exist
-	var note models.Note
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&note).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-		return
+	id, paramErr := strconv.Atoi(c.Param("id"))
+
+	if paramErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
 	}
 
-	// Validate input
-	var input UpdateNoteInput
+	var input CreateNoteInput
+
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	models.DB.Model(&note).Updates(models.Note{Title: input.Title, Content: input.Content})
+	note, _ := database.CLIENT.Note.Update().
+		SetTitle(input.Title).
+		SetContent(input.Content).
+		Where(note.ID(id)).
+		Save(context.Background())
 
-	// ERROR: Note is updated in DB but not returning data in response which leads to infinite response time for some reason
 	c.JSON(http.StatusOK, gin.H{"data": note})
 }
 
 // DELETE /notes/:id
 // Delete a note
 func DeleteNote(c *gin.Context) {
-	// Get model if exist
-	var note models.Note
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&note).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-		return
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
 	}
 
-	models.DB.Delete(&note)
+	note := database.CLIENT.Note.DeleteOneID(id).Exec(c)
+	result := fmt.Sprintf("%v", note)
 
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	if result == "<nil>" {
+		c.JSON(http.StatusOK, gin.H{"data": "Note deleted successfully!"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"data": "Note not found"})
+	}
 }
