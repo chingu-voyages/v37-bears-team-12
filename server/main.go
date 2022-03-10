@@ -3,6 +3,7 @@ package main
 import (
 	"notes-app/controllers"
 	"notes-app/database"
+	"notes-app/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,11 +15,11 @@ func main() {
 	database.ConnectDatabase()
 
 	// Routes
-	r.GET("/notes", controllers.FindNotes)
-	r.GET("/notes/:id", controllers.FindNote)
-	r.POST("/notes", controllers.CreateNote)
-	r.PATCH("/notes/:id", controllers.UpdateNote)
-	r.DELETE("/notes/:id", controllers.DeleteNote)
+	r.GET("/notes", middleware.AuthorizeJWT(controllers.FindNotes))
+	r.GET("/notes/:id", middleware.AuthorizeJWT(controllers.FindNote))
+	r.POST("/notes", middleware.AuthorizeJWT(controllers.CreateNote))
+	r.PATCH("/notes/:id", middleware.AuthorizeJWT(controllers.UpdateNote))
+	r.DELETE("/notes/:id", middleware.AuthorizeJWT(controllers.DeleteNote))
 
 	// Run the server
 	r.Run()
