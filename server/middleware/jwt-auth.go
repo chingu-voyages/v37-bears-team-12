@@ -3,6 +3,7 @@ package middleware
 import (
 	"log"
 	"net/http"
+	"notes-app/helper"
 	"notes-app/service"
 
 	"github.com/dgrijalva/jwt-go"
