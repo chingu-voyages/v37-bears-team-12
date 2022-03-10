@@ -3,9 +3,8 @@ package middleware
 import (
 	"log"
 	"net/http"
+	"notes-app/service"
 
-	"github.com/chingu-voyages/v37-bears-team-12/server/helper"
-	"github.com/chingu-voyages/v37-bears-team-12/server/service"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
