@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"notes-app/database"
 	"notes-app/ent/note"
+
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +26,14 @@ type UpdateNoteInput struct {
 // GET /notes
 // Find all notes
 func FindNotes(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+
+	log.Println(authHeader)
+	log.Println("we are here")
+
+	//token, err := service.JWTService.ValidateToken(authHeader)
+	//log.Println(token.Claims.(jwt.MapClaims)["sub"])
+
 	items, err := database.CLIENT.Note.Query().All(c)
 
 	if err != nil {

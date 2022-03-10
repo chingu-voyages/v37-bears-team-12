@@ -2,10 +2,12 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/joho/godotenv"
 )
 
 //JWTService is a contract of what jwtService can do
@@ -27,16 +29,22 @@ type jwtService struct {
 //NewJWTService method is creates a new instance of JWTService
 func NewJWTService() JWTService {
 	return &jwtService{
-		issuer:    "ydhnwb",
+		issuer:    "",
 		secretKey: getSecretKey(),
 	}
 }
 
 func getSecretKey() string {
-	secretKey := os.Getenv("JWT_SECRET")
-	if secretKey != "" {
-		secretKey = "ydhnwb"
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
 	}
+
+	secretKey := os.Getenv("JWT_SECRET")
+	// if secretKey != "" {
+	// 	secretKey = "eeeeee"
+	// }
 	return secretKey
 }
 
@@ -62,6 +70,7 @@ func (j *jwtService) ValidateToken(token string) (*jwt.Token, error) {
 		if _, ok := t_.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method %v", t_.Header["alg"])
 		}
+		//log.Println("secretKey: ", j.secretKey)
 		return []byte(j.secretKey), nil
 	})
 }

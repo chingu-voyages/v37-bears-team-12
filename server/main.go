@@ -4,10 +4,12 @@ import (
 	"notes-app/controllers"
 	"notes-app/database"
 	"notes-app/middleware"
-	_ "notes-app/service"
+	"notes-app/service"
 
 	"github.com/gin-gonic/gin"
 )
+
+var jwtService service.JWTService = service.NewJWTService()
 
 func main() {
 	r := gin.Default()
