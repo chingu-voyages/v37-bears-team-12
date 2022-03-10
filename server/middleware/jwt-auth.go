@@ -4,8 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/chingu-voyages/v37-bears-team-12/helper"
-	"github.com/chingu-voyages/v37-bears-team-12/service"
+	"notes-app/helper"
+	"notes-app/service"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
