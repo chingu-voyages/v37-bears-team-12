@@ -40,7 +40,7 @@ export async function getServerSideProps(context) {
         {
             method: "GET",
             headers: {
-                apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3bnh4eGhkY2dld2x2bXB3ZGtsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDU1NTk1NDUsImV4cCI6MTk2MTEzNTU0NX0.TefHcTpo86yLHluNIrAOZEEdIb4ZUkHVvm_6MTtNp8c",
+                apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
             },
         }
     );
