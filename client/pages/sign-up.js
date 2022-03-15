@@ -11,8 +11,8 @@ export default function signUp() {
                             <Link href="/login">
                                 <a className="bg-white rounded-xl px-2 py-1 mx-3 hover:text-white hover:bg-transparent">Login</a>
                             </Link>
-                            <Link href="/about">
-                                <a className="bg-white rounded-xl px-2 py-1 mx-3 hover:text-white hover:bg-transparent">About</a>
+                            <Link href="/">
+                                <a className="bg-white rounded-xl px-2 py-1 mx-3 hover:text-white hover:bg-transparent">Home</a>
                             </Link>
                         </ul>
                     </nav>
