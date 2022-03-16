@@ -1,7 +1,7 @@
 import{ useQuill } from 'react-quilljs'
 import 'quill/dist/quill.snow.css';
 // or import 'quill/dist/quill.bubble.css'; // Add css for bubble theme
-import TempNavBar from "../components/tempNavBar";
+import NavBar from "../components/NavBar";
 
 
 export default function edit() {
@@ -13,7 +13,7 @@ export default function edit() {
     return (
         
         <div className="flex flex-col md:flex-row">
-            <TempNavBar />
+            <NavBar />
             <main className='w-full'>
                 <div className='h-screen w-full'>
                     <div ref={quillRef} className='w-full'/>
