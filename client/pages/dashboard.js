@@ -1,6 +1,6 @@
 import NotesCard from "../components/notesCard";
 import GreetingDate from "../components/greetingDate";
-import TempNavBar from "../components/tempNavBar";
+import NavBar from "../components/NavBar";
 
 export default function dashboard({data}) {
     
@@ -26,7 +26,7 @@ export default function dashboard({data}) {
 
     return (
         <div className="flex flex-col md:flex-row">
-            <TempNavBar />
+            <NavBar />
 
             <main className="md:w-10/12 bg-cover bg-[url('/images/coffee-notebook.jpg')]">
                 <GreetingDate />
