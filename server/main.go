@@ -3,15 +3,27 @@ package main
 import (
 	"notes-app/controllers"
 	"notes-app/database"
+	"notes-app/ent"
 	"notes-app/middleware"
+	_ "notes-app/repository"
 	"notes-app/service"
 
 	"github.com/gin-gonic/gin"
 )
 
-var jwtService service.JWTService = service.NewJWTService()
+var (
+	db *ent.Client = database.ConnectDatabase()
+
+	noteRepository repository.NoteRepository = repository.NewBookRepository(db)
+	jwtService     service.JWTService        = service.NewJWTService()
+
+	noteService service.NoteService = service.NewNoteService(noteRepository)
+
+	bookController controller.BookController = controller.NewNoteController(noteService, jwtService)
+)
 
 func main() {
+
 	r := gin.Default()
 
 	// Connect to database
