@@ -1,6 +1,21 @@
 import Link from "next/link";
+import {useRef, useState } from 'react'
+
+import { useAuth } from "../components/Auth";
 
 export default function signUp() {
+
+    const emailRef = useRef()
+    const passwordRef = useRef()
+
+    const { signUp } = useAuth();
+  
+    async function handleSubmit(e) {
+      e.preventDefault()
+  
+      // @TODO: add sign up logic
+    }
+
     return (
         <div className="h-screen bg-cover bg-[url('/images/coffee-notebook.jpg')] overflow-auto">
             <div className="flex flex-col h-screen">
@@ -54,10 +69,10 @@ export default function signUp() {
                         </div>
 
                         <div className="text-grey-dark mt-6">
-                            Already have an account?  
-                            <a className="no-underline border-b border-blue text-blue" href="../login/">
+                           <p>Already have an account? <a className="no-underline border-b border-blue text-blue" href="../login/">
                                 Log in
-                            </a>.
+                            </a>.</p>  
+                         
                         </div>
                     </div>
                 </div>

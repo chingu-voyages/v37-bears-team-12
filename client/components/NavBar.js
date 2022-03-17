@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { HomeIcon, DocumentIcon, DocumentAddIcon, InformationCircleIcon, LogoutIcon } from '@heroicons/react/solid'
 
-export default function TempNavBar() {
+export default function NavBar() {
+    async function handleSignOut() {
+        // @TODO: add sign out logic
+      }
     return (
         <aside className="content-between md:w-2/12 bg-[#A49EA2]">
             <div className="text-white flex flex-col">
@@ -18,7 +21,7 @@ export default function TempNavBar() {
                         <a className="underline pl-4 mb-3 text-lg h-11 rounded-lg flex items-center hover:bg-black hover:opacity-25"><DocumentAddIcon className="h-6 w-6 mr-2"/>Add a Note</a>
                     </Link>
                     
-                    <li className="pl-4 mb-3 text-lg h-11 flex items-center rounded-lg hover:bg-black hover:opacity-25"><LogoutIcon className="h-6 w-6 mr-2 mt-1"/>Sign Out</li>
+                    <a className="pl-4 mb-3 text-lg h-11 flex items-center rounded-lg hover:bg-black hover:opacity-25" onClick={handleSignOut}><LogoutIcon className="h-6 w-6 mr-2 mt-1"/>Sign Out</a>
                 </ul>
             </div>
         </aside>
