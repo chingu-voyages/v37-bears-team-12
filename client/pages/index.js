@@ -19,10 +19,7 @@ export default function Home() {
                             <Link href="/login">
                                 <a className="bg-white rounded-xl px-2 py-1 mr-5 hover:text-white hover:bg-transparent">Login</a>
                             </Link>
-                            <Link href="/sign-up">
-                                <a className="bg-white rounded-xl px-2 py-1 mr-5 hover:text-white hover:bg-transparent">Sign up</a>
-                            </Link>
-                            
+                                                       
                             <button onClick={handleClick} className="bg-white rounded-xl px-2 py-1 mr-7 hover:text-white hover:bg-transparent">About</button>
                             
                         </ul>
