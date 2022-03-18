@@ -1,6 +1,37 @@
 import Link from "next/link";
+import { useRouter } from 'next/router';
+import {useRef, useState } from 'react'
+
+import { useAuth } from "../components/Auth";
+
 
 export default function login() {
+
+    const emailRef = useRef()
+    const passwordRef = useRef()
+
+    // Get signUp function from the auth context
+    const { signIn } = useAuth()
+
+    const history = useRouter()
+
+    async function handleSubmit(e) {
+        e.preventDefault()
+
+        // Get email and password input values
+        const email = emailRef.current.value
+        const password = passwordRef.current.value
+
+        // Calls `signIn` function from the context
+        const { error } = await signIn({ email, password })
+
+        if (error) {
+        alert('error signing in')
+        } else {
+        // Redirect user to Dashboard
+        history.push('/')
+        }
+    }
     return (
         <div className="h-screen bg-cover bg-[url('/images/coffee-notebook.jpg')] ">
             <div className="flex flex-col h-screen">
@@ -20,7 +51,7 @@ export default function login() {
                 
                 <main className="flex items-center justify-center h-5/6">
                     <div className="w-full max-w-md">
-                        <form className="bg-slate-50/75 shadow-lg rounded-lg px-12 pt-6 pb-8 mb-4">
+                        <form onSubmit={handleSubmit} className="bg-slate-50/75 shadow-lg rounded-lg px-12 pt-6 pb-8 mb-4">
                             
                             <div
                             className="text-gray-800 text-2xl flex justify-center border-b-2 py-2 mb-4"

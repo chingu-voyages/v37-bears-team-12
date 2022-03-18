@@ -1,9 +1,20 @@
 import Link from "next/link";
 import { HomeIcon, DocumentIcon, DocumentAddIcon, InformationCircleIcon, LogoutIcon } from '@heroicons/react/solid'
+import { useRouter } from 'next/router';
+import { useAuth } from "./Auth";
 
 export default function NavBar() {
+    // Get current user and signOut function from context
+    const { user, signOut } = useAuth()
+
+    const history = useRouter()
     async function handleSignOut() {
-        // @TODO: add sign out logic
+       
+        // Ends user session
+        await signOut()
+
+        // Redirects the user to Login page
+        history.push('/login')
       }
     return (
         <aside className="content-between md:w-2/12 bg-[#A49EA2]">
