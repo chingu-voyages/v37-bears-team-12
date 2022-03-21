@@ -46,14 +46,36 @@ export default function edit() {
     return (
         <div className="flex flex-col md:flex-row">
             <NavBar />
-            <main className="w-full">
-                <button type="button" onClick={handleSubmit}>
-                    Submit
-                </button>
+            <main className="w-full h-screen">
 
-                <div className="h-screen w-full">
-                    <div ref={quillRef} className="w-full" />
-                </div>
+                <form onSubmit={handleSubmit} className="h-full w-full relative">
+                    <div className="h-1/6 text-2xl">
+                        <div className="h-1/2 flex items-center ">
+                            
+                            <input className="h-full w-full placeholder-shown:text-2xl focus:outline-none" type="text" id="title" placeholder="Enter Title"/>
+                        </div>
+                        <div className="h-1/2 flex items-center">
+                            <select className="h-full w-full text-gray-500 focus:outline-none "  id="subject">
+                                <option value="" disabled selected hidden>Choose a subject</option>
+                                <option value="Biology" >Biology</option>
+                                <option value="Calculus">Calculus</option>
+                                <option value="History">History</option>
+                                <option value="Physics">Physics</option>
+                                <option value="English">English</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="h-[79%] w-full relative">
+                        <div ref={quillRef} className="h-full"/>
+                    </div>
+                    <button type="button" className="absolute bottom-0 right-0 mb-24 mr-24 px-8 py-6 bg-green-500 hover:bg-green-700 text-lg font-bold shadow shadow-black rounded-full ">
+                        Submit
+                    </button>
+                </form>
+
+
+
+
             </main>
         </div>
     );
