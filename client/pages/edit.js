@@ -46,14 +46,36 @@ export default function edit() {
     return (
         <div className="flex flex-col md:flex-row">
             <NavBar />
-            <main className="w-full">
-                <button type="button" onClick={handleSubmit}>
-                    Submit
-                </button>
+            <main className="w-full h-screen">
 
-                <div className="h-screen w-full">
-                    <div ref={quillRef} className="w-full" />
-                </div>
+                <form onSubmit={handleSubmit} className="h-full w-full relative">
+                    <div className="h-1/6">
+                        <div className=" flex align-center">
+                            <label for="title">Enter Title:</label>
+                            <input type="text" id="title" name="title" />
+                        </div>
+                        <div className="">
+                            <label for='subject'>Subject:</label>
+                            <select name="subject" id="subject">
+                                <option value="volvo">Biology</option>
+                                <option value="saab">Calculus</option>
+                                <option value="mercedes">History</option>
+                                <option value="audi">Physics</option>
+                                <option value="audi">English</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="h-5/6 w-full relative">
+                        <div ref={quillRef} className="h-full"/>
+                    </div>
+                    <button type="button" className="absolute bottom-0 right-0 mb-24 mr-24 px-8 py-6 bg-red-500 hover:bg-red-700 rounded-full ">
+                        Submit
+                    </button>
+                </form>
+
+
+
+
             </main>
         </div>
     );
