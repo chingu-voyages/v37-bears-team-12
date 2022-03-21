@@ -41,14 +41,3 @@ export default function Note() {
         </>
     );
 }
-
-// return (
-//     <>
-//         {/* <Head>
-//             <title>{title}</title>
-//         </Head> */}
-//         <h1>This is an individual note page</h1>
-//         {/* <h2>{message}</h2> */}
-//         {/* <p>{content}</p> */}
-//     </>
-// );
