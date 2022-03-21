@@ -49,23 +49,24 @@ export default function edit() {
             <main className="w-full h-screen">
 
                 <form onSubmit={handleSubmit} className="h-full w-full relative">
-                    <div className="h-1/6">
-                        <div className=" flex align-center">
-                            <label for="title">Enter Title:</label>
-                            <input type="text" id="title" name="title" />
+                    <div className="h-1/6 text-2xl">
+                        <div className="h-1/2 flex items-center ">
+                            
+                            <input className="h-full w-full placeholder-shown:text-2xl" type="text" id="title" placeholder="Enter Title"/>
                         </div>
-                        <div className="">
-                            <label for='subject'>Subject:</label>
-                            <select name="subject" id="subject">
-                                <option value="volvo">Biology</option>
-                                <option value="saab">Calculus</option>
-                                <option value="mercedes">History</option>
-                                <option value="audi">Physics</option>
-                                <option value="audi">English</option>
+                        <div className="h-1/2 flex items-center">
+                            <select className="h-full w-full text-gray-500"  id="subject">
+                                <option value="" disabled selected hidden>Choose a subject</option>
+                                
+                                <option value="Biology">Biology</option>
+                                <option value="Calculus">Calculus</option>
+                                <option value="History">History</option>
+                                <option value="Physics">Physics</option>
+                                <option value="English">English</option>
                             </select>
                         </div>
                     </div>
-                    <div className="h-5/6 w-full relative">
+                    <div className="h-[79%] w-full relative">
                         <div ref={quillRef} className="h-full"/>
                     </div>
                     <button type="button" className="absolute bottom-0 right-0 mb-24 mr-24 px-8 py-6 bg-red-500 hover:bg-red-700 rounded-full ">
