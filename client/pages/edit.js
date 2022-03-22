@@ -2,9 +2,11 @@ import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
 // or import 'quill/dist/quill.bubble.css'; // Add css for bubble theme
 import NavBar from "../components/NavBar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function edit() {
+    const [title, setTitle] = useState('')
+    const [subject, setSubject] = useState('')
     const { quill, quillRef } = useQuill();
     let content = "";
 
@@ -22,12 +24,18 @@ export default function edit() {
         }
     }, [quill]);
 
-    function handleSubmit() {
+    function handleSubmit(e) {
+        e.preventDefault();
         let data = {
-            title: "test title on Wednesday late afternoon",
+            title: title,
             content: content,
             user_id: 1,
         };
+
+        
+        console.log(title)
+        console.log(subject)
+        console.log(content)
 
         // Post data to database
         fetch(`https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`, {
@@ -52,10 +60,10 @@ export default function edit() {
                     <div className="h-1/6 text-2xl">
                         <div className="h-1/2 flex items-center ">
                             
-                            <input className="h-full w-full placeholder-shown:text-2xl focus:outline-none" type="text" id="title" placeholder="Enter Title"/>
+                            <input className="h-full w-full placeholder-shown:text-2xl focus:outline-none" type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Enter Title"/>
                         </div>
                         <div className="h-1/2 flex items-center">
-                            <select className="h-full w-full text-gray-500 focus:outline-none "  id="subject">
+                            <select className="h-full w-full text-gray-500 focus:outline-none "  id="subject" value={subject} onChange={e => setSubject(e.target.value)}>
                                 <option value="" disabled selected hidden>Choose a subject</option>
                                 <option value="Biology" >Biology</option>
                                 <option value="Calculus">Calculus</option>
@@ -68,7 +76,7 @@ export default function edit() {
                     <div className="h-[79%] w-full relative">
                         <div ref={quillRef} className="h-full"/>
                     </div>
-                    <button type="button" className="absolute bottom-0 right-0 mb-24 mr-24 px-8 py-6 bg-green-500 hover:bg-green-700 text-lg font-bold shadow shadow-black rounded-full ">
+                    <button type="submit" value="submit" className="absolute bottom-0 right-0 mb-24 mr-24 px-8 py-6 bg-green-500 hover:bg-green-700 text-lg font-bold shadow shadow-black rounded-full ">
                         Submit
                     </button>
                 </form>
