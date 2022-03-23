@@ -2,14 +2,17 @@ package service
 
 import (
 	"notes-app/dto"
-	"notes-app/ent/schema"
+	"notes-app/ent"
 	"notes-app/repository"
+
+	"github.com/gin-gonic/gin"
 )
 
 type NoteService interface {
-	Update(input dto.UpdateNoteInput) string
-	FindAll() string
-	FindByID(noteID int) string
+	FindNotes(context *gin.Context) []*ent.Note
+	FindByID(context *gin.Context, noteID int) string
+	CreateNote(context *gin.Context, input dto.CreateNoteInput) string
+	UpdateNote(context *gin.Context, input dto.UpdateNoteInput) string
 }
 
 type noteService struct {
@@ -22,7 +25,11 @@ func NewNoteService(noteRepository repository.NoteRepository) NoteService {
 	}
 }
 
-func (service *noteService) Create(b schema.Note) string {
+func (service *noteService) FindNotes(context *gin.Context) []*ent.Note {
+	return service.noteRepository.FindNotes(context)
+}
+
+func (service *noteService) CreateNote(context *gin.Context, input dto.CreateNoteInput) string {
 	// // Note := entity.Note{}
 	// // err := smapping.FillStruct(&Note, smapping.MapFields(&b))
 	// // if err != nil {
@@ -35,7 +42,7 @@ func (service *noteService) Create(b schema.Note) string {
 	return ""
 }
 
-func (service *noteService) Update(input dto.UpdateNoteInput) string {
+func (service *noteService) UpdateNote(context *gin.Context, input dto.UpdateNoteInput) string {
 	// // Note := entity.Note{}
 	// // err := smapping.FillStruct(&Note, smapping.MapFields(&b))
 	// // if err != nil {
@@ -47,13 +54,7 @@ func (service *noteService) Update(input dto.UpdateNoteInput) string {
 
 }
 
-func (service *noteService) FindAll() string {
-	// return service.noteRepository.FindNotes()
-
-	return ""
-}
-
-func (service *noteService) FindByID(noteId int) string {
+func (service *noteService) FindByID(context *gin.Context, noteId int) string {
 	// return service.noteRepository.FindNote(noteId)
 	return ""
 }

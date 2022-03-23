@@ -23,11 +23,11 @@ func init() {
 	// note.ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	note.ContentValidator = noteDescContent.Validators[0].(func(string) error)
 	// noteDescCreatedAt is the schema descriptor for created_at field.
-	noteDescCreatedAt := noteFields[2].Descriptor()
+	noteDescCreatedAt := noteFields[3].Descriptor()
 	// note.DefaultCreatedAt holds the default value on creation for the created_at field.
 	note.DefaultCreatedAt = noteDescCreatedAt.Default.(func() time.Time)
 	// noteDescUpdatedAt is the schema descriptor for updated_at field.
-	noteDescUpdatedAt := noteFields[3].Descriptor()
+	noteDescUpdatedAt := noteFields[4].Descriptor()
 	// note.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	note.DefaultUpdatedAt = noteDescUpdatedAt.Default.(func() time.Time)
 }

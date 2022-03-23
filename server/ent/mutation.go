@@ -34,6 +34,7 @@ type NoteMutation struct {
 	id            *int
 	title         *string
 	content       *string
+	subject       *string
 	created_at    *time.Time
 	updated_at    *time.Time
 	clearedFields map[string]struct{}
@@ -212,6 +213,55 @@ func (m *NoteMutation) ResetContent() {
 	m.content = nil
 }
 
+// SetSubject sets the "subject" field.
+func (m *NoteMutation) SetSubject(s string) {
+	m.subject = &s
+}
+
+// Subject returns the value of the "subject" field in the mutation.
+func (m *NoteMutation) Subject() (r string, exists bool) {
+	v := m.subject
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSubject returns the old "subject" field's value of the Note entity.
+// If the Note object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NoteMutation) OldSubject(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSubject is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSubject requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSubject: %w", err)
+	}
+	return oldValue.Subject, nil
+}
+
+// ClearSubject clears the value of the "subject" field.
+func (m *NoteMutation) ClearSubject() {
+	m.subject = nil
+	m.clearedFields[note.FieldSubject] = struct{}{}
+}
+
+// SubjectCleared returns if the "subject" field was cleared in this mutation.
+func (m *NoteMutation) SubjectCleared() bool {
+	_, ok := m.clearedFields[note.FieldSubject]
+	return ok
+}
+
+// ResetSubject resets all changes to the "subject" field.
+func (m *NoteMutation) ResetSubject() {
+	m.subject = nil
+	delete(m.clearedFields, note.FieldSubject)
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *NoteMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -303,12 +353,15 @@ func (m *NoteMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NoteMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.title != nil {
 		fields = append(fields, note.FieldTitle)
 	}
 	if m.content != nil {
 		fields = append(fields, note.FieldContent)
+	}
+	if m.subject != nil {
+		fields = append(fields, note.FieldSubject)
 	}
 	if m.created_at != nil {
 		fields = append(fields, note.FieldCreatedAt)
@@ -328,6 +381,8 @@ func (m *NoteMutation) Field(name string) (ent.Value, bool) {
 		return m.Title()
 	case note.FieldContent:
 		return m.Content()
+	case note.FieldSubject:
+		return m.Subject()
 	case note.FieldCreatedAt:
 		return m.CreatedAt()
 	case note.FieldUpdatedAt:
@@ -345,6 +400,8 @@ func (m *NoteMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldTitle(ctx)
 	case note.FieldContent:
 		return m.OldContent(ctx)
+	case note.FieldSubject:
+		return m.OldSubject(ctx)
 	case note.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case note.FieldUpdatedAt:
@@ -371,6 +428,13 @@ func (m *NoteMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetContent(v)
+		return nil
+	case note.FieldSubject:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSubject(v)
 		return nil
 	case note.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -415,7 +479,11 @@ func (m *NoteMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *NoteMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(note.FieldSubject) {
+		fields = append(fields, note.FieldSubject)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -428,6 +496,11 @@ func (m *NoteMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *NoteMutation) ClearField(name string) error {
+	switch name {
+	case note.FieldSubject:
+		m.ClearSubject()
+		return nil
+	}
 	return fmt.Errorf("unknown Note nullable field %s", name)
 }
 
@@ -440,6 +513,9 @@ func (m *NoteMutation) ResetField(name string) error {
 		return nil
 	case note.FieldContent:
 		m.ResetContent()
+		return nil
+	case note.FieldSubject:
+		m.ResetSubject()
 		return nil
 	case note.FieldCreatedAt:
 		m.ResetCreatedAt()

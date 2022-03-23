@@ -32,6 +32,20 @@ func (nc *NoteCreate) SetContent(s string) *NoteCreate {
 	return nc
 }
 
+// SetSubject sets the "subject" field.
+func (nc *NoteCreate) SetSubject(s string) *NoteCreate {
+	nc.mutation.SetSubject(s)
+	return nc
+}
+
+// SetNillableSubject sets the "subject" field if the given value is not nil.
+func (nc *NoteCreate) SetNillableSubject(s *string) *NoteCreate {
+	if s != nil {
+		nc.SetSubject(*s)
+	}
+	return nc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (nc *NoteCreate) SetCreatedAt(t time.Time) *NoteCreate {
 	nc.mutation.SetCreatedAt(t)
@@ -207,6 +221,14 @@ func (nc *NoteCreate) createSpec() (*Note, *sqlgraph.CreateSpec) {
 			Column: note.FieldContent,
 		})
 		_node.Content = value
+	}
+	if value, ok := nc.mutation.Subject(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: note.FieldSubject,
+		})
+		_node.Subject = value
 	}
 	if value, ok := nc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
