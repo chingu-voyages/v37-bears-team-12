@@ -3,12 +3,14 @@ package controller
 import (
 	"net/http"
 	"notes-app/service"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type NoteController interface {
 	FindNotes(c *gin.Context)
+	FindNoteByID(c *gin.Context)
 }
 
 // type NoteController interface {
@@ -33,9 +35,30 @@ func NewNoteController(noteService service.NoteService, jwtService service.JWTSe
 
 // GET /notes
 // Find all notes
-func (controller *noteController) FindNotes(context *gin.Context) {
-	// notes, err := controller.noteService.FindNotes(context)
-	notes := controller.noteService.FindNotes(context)
+func (controller *noteController) FindNotes(c *gin.Context) {
+	notes := controller.noteService.FindNotes(c)
 
-	context.JSON(http.StatusOK, gin.H{"data": notes})
+	c.JSON(http.StatusOK, gin.H{"data": notes})
+}
+
+func (controller *noteController) FindNoteByID(c *gin.Context) {
+	noteID, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
+	}
+
+	note := controller.noteService.FindNoteByID(c, noteID)
+
+	c.JSON(http.StatusOK, gin.H{"data": note})
+}
+
+func (controller *noteController) CreateNote(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{"data": ""})
+}
+
+func (controller *noteController) UpdateNote(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{"data": ""})
 }

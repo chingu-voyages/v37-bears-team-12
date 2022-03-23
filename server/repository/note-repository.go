@@ -1,9 +1,11 @@
 package repository
 
 import (
+	"context"
 	"log"
 	"notes-app/dto"
 	"notes-app/ent"
+	"notes-app/ent/note"
 	"notes-app/entity/model"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +13,7 @@ import (
 
 type NoteRepository interface {
 	FindNotes(context *gin.Context) []*ent.Note
-	FindNoteByID(context *gin.Context, noteId int) string
+	FindNoteByID(context *gin.Context, noteId int) *ent.Note
 	CreateNote(context *gin.Context, input dto.CreateNoteInput) string
 	UpdateNote(context *gin.Context, n model.Note) string
 }
@@ -49,23 +51,12 @@ func (db *noteConnection) FindNotes(context *gin.Context) []*ent.Note {
 	return notes
 }
 
-func (db *noteConnection) FindNoteByID(context *gin.Context, NoteID int) string {
-	// var Note client.Note
-	// db.connection.Preload("User").Find(&Note, NoteID)
-	// return Note
+func (db *noteConnection) FindNoteByID(c *gin.Context, NoteID int) *ent.Note {
+	note, _ := db.connection.Note.Query().
+		Where(note.ID(NoteID)).
+		First(context.Background())
 
-	// id, err := strconv.Atoi(c.Param("id"))
-
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
-	// }
-
-	// note, _ := database.CLIENT.Note.Query().
-	// 	Where(note.ID(id)).
-	// 	First(context.Background())
-
-	// c.JSON(http.StatusOK, gin.H{"data": note})
-	return ""
+	return note
 }
 
 func (db *noteConnection) CreateNote(context *gin.Context, input dto.CreateNoteInput) string {

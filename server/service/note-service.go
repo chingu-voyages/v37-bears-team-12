@@ -10,7 +10,7 @@ import (
 
 type NoteService interface {
 	FindNotes(context *gin.Context) []*ent.Note
-	FindByID(context *gin.Context, noteID int) string
+	FindNoteByID(context *gin.Context, noteID int) *ent.Note
 	CreateNote(context *gin.Context, input dto.CreateNoteInput) string
 	UpdateNote(context *gin.Context, input dto.UpdateNoteInput) string
 }
@@ -25,8 +25,12 @@ func NewNoteService(noteRepository repository.NoteRepository) NoteService {
 	}
 }
 
-func (service *noteService) FindNotes(context *gin.Context) []*ent.Note {
-	return service.noteRepository.FindNotes(context)
+func (service *noteService) FindNotes(c *gin.Context) []*ent.Note {
+	return service.noteRepository.FindNotes(c)
+}
+
+func (service *noteService) FindNoteByID(c *gin.Context, noteID int) *ent.Note {
+	return service.noteRepository.FindNoteByID(c, noteID)
 }
 
 func (service *noteService) CreateNote(context *gin.Context, input dto.CreateNoteInput) string {
@@ -52,9 +56,4 @@ func (service *noteService) UpdateNote(context *gin.Context, input dto.UpdateNot
 	// service.noteRepository.UpdateNote(b)
 	return ""
 
-}
-
-func (service *noteService) FindByID(context *gin.Context, noteId int) string {
-	// return service.noteRepository.FindNote(noteId)
-	return ""
 }

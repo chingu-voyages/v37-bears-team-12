@@ -26,10 +26,10 @@ func main() {
 	noteRoutes := r.Group("/api/notes/", middleware.AuthorizeJWT(jwtService))
 	{
 		noteRoutes.GET("/", noteController.FindNotes)
-		// noteRoutes.GET("/:id", controller.FindNote)
-		// noteRoutes.POST("/", controller.CreateNote)
-		// noteRoutes.PATCH("/:id", controller.UpdateNote)
-		// noteRoutes.DELETE("/:id", controller.DeleteNote)
+		noteRoutes.GET("/:id", noteController.FindNoteByID)
+		// noteRoutes.POST("/", noteController.CreateNote)
+		// noteRoutes.PATCH("/:id", noteController.UpdateNote)
+		// noteRoutes.DELETE("/:id", noteController.DeleteNote)
 	}
 
 	// Run the server
