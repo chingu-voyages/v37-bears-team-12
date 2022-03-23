@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { TrashIcon } from '@heroicons/react/solid'
 
-export default function NotesCard({ id, title, created_at, content }) {
+export default function NotesCard({ id, title, subject, created_at, content }) {
     let contentPreview;
     if (content.length > 250) {
         contentPreview = content.slice(0, 250) + " ...";
@@ -36,7 +36,8 @@ export default function NotesCard({ id, title, created_at, content }) {
             <Link href={`/notes/${id}`}>
                 <a className= "hover:font-semibold text-lg">{title}</a>
             </Link>
-            <h3 className="">{date}</h3>
+            <h2>{subject}</h2>
+            <h3>{date}</h3>
             <div>{contentPreview}</div>
             <button onClick={deleteNoteConfirm}>
                 <TrashIcon className="h-6 w-6 hover:text-red-600"/>
