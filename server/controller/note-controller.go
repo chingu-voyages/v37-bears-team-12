@@ -68,9 +68,13 @@ func (controller *noteController) CreateNote(c *gin.Context) {
 
 	fmt.Print(input)
 
-	note := controller.noteService.CreateNote(c, input)
+	note, err := controller.noteService.CreateNote(c, input)
 
-	c.JSON(http.StatusOK, gin.H{"data": note})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(http.StatusCreated, gin.H{"data": note})
+	}
 }
 
 func (controller *noteController) UpdateNote(c *gin.Context) {
@@ -88,9 +92,13 @@ func (controller *noteController) UpdateNote(c *gin.Context) {
 		return
 	}
 
-	note := controller.noteService.UpdateNote(c, noteID, input)
+	note, err := controller.noteService.UpdateNote(c, noteID, input)
 
-	c.JSON(http.StatusOK, gin.H{"data": note})
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"data": note})
+	}
 }
 
 func (controller *noteController) DeleteNote(c *gin.Context) {

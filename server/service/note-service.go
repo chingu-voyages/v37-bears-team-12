@@ -11,8 +11,8 @@ import (
 type NoteService interface {
 	FindNotes(c *gin.Context) []*ent.Note
 	FindNoteByID(c *gin.Context, noteID int) *ent.Note
-	CreateNote(c *gin.Context, input dto.CreateNoteInput) *ent.Note
-	UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) *ent.Note
+	CreateNote(c *gin.Context, input dto.CreateNoteInput) (*ent.Note, error)
+	UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) (*ent.Note, error)
 	DeleteNote(c *gin.Context, noteID int) string
 }
 
@@ -34,11 +34,11 @@ func (service *noteService) FindNoteByID(c *gin.Context, noteID int) *ent.Note {
 	return service.noteRepository.FindNoteByID(c, noteID)
 }
 
-func (service *noteService) CreateNote(c *gin.Context, input dto.CreateNoteInput) *ent.Note {
+func (service *noteService) CreateNote(c *gin.Context, input dto.CreateNoteInput) (*ent.Note, error) {
 	return service.noteRepository.CreateNote(c, input)
 }
 
-func (service *noteService) UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) *ent.Note {
+func (service *noteService) UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) (*ent.Note, error) {
 	return service.noteRepository.UpdateNote(c, noteID, input)
 }
 

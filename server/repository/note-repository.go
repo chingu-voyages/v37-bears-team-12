@@ -15,8 +15,8 @@ import (
 type NoteRepository interface {
 	FindNotes(c *gin.Context) []*ent.Note
 	FindNoteByID(c *gin.Context, noteId int) *ent.Note
-	CreateNote(c *gin.Context, input dto.CreateNoteInput) *ent.Note
-	UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) *ent.Note
+	CreateNote(c *gin.Context, input dto.CreateNoteInput) (*ent.Note, error)
+	UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) (*ent.Note, error)
 	DeleteNote(c *gin.Context, noteID int) string
 }
 
@@ -49,20 +49,16 @@ func (db *noteConnection) FindNoteByID(c *gin.Context, NoteID int) *ent.Note {
 	return note
 }
 
-func (db *noteConnection) CreateNote(c *gin.Context, input dto.CreateNoteInput) *ent.Note {
+func (db *noteConnection) CreateNote(c *gin.Context, input dto.CreateNoteInput) (*ent.Note, error) {
 	note, err := db.connection.Note.Create().
 		SetTitle(input.Title).
 		SetContent(input.Content).
 		Save(c)
 
-	if err != nil {
-		log.Fatalf("Failed creating a note: %v", err)
-	}
-
-	return note
+	return note, err
 }
 
-func (db *noteConnection) UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) *ent.Note {
+func (db *noteConnection) UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) (*ent.Note, error) {
 	note, err := db.connection.Note.UpdateOneID(noteID).
 		SetTitle(input.Title).
 		SetContent(input.Content).
@@ -70,14 +66,7 @@ func (db *noteConnection) UpdateNote(c *gin.Context, noteID int, input dto.Updat
 		SetUpdatedAt(time.Now()).
 		Save(context.Background())
 
-	print(note)
-	print("HELLO WORLD")
-
-	if err != nil {
-		log.Fatalf("Failed updating a note: %v", err)
-	}
-
-	return note
+	return note, err
 }
 
 func (db *noteConnection) DeleteNote(c *gin.Context, noteID int) string {
