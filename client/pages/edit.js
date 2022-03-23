@@ -32,6 +32,7 @@ export default function edit() {
         e.preventDefault();
         let data = {
             title: title,
+            subject: subject,
             content: content,
             user_id: 1,
         };
