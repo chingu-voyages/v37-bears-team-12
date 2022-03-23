@@ -10,26 +10,31 @@ export default function edit() {
     const [title, setTitle] = useState('')
     const [subject, setSubject] = useState('DEFAULT')
     const { quill, quillRef } = useQuill({ theme });
-    let content = "";
+    
 
     
 
-    useEffect(() => {
-        if (quill) {
-            quill.on("text-change", (delta, oldDelta, source) => {
-                // console.log('Text change!');
-                // console.log(quill.getText()); // Get text only
-                // console.log(quill.getContents()); // Get delta contents
-                // Get innerHTML using quill
-                // content = quill.root.innerHTML;
-                content = quill.getText();
-                // console.log(quillRef.current.firstChild.innerHTML); // Get innerHTML using quillRef
-            });
-        }
-    }, [quill]);
+    // useEffect(() => {
+    //     if (quill) {
+    //         quill.on("text-change", (delta, oldDelta, source) => {
+    //             // console.log('Text change!');
+    //             // console.log(quill.getText()); // Get text only
+    //             // console.log(quill.getContents()); // Get delta contents
+    //             // Get innerHTML using quill
+    //             // content = quill.root.innerHTML;
+    //             content = quill.getContents();
+    //             // console.log(quillRef.current.firstChild.innerHTML); // Get innerHTML using quillRef
+    //         });
+    //     }
+    // }, [quill]);
 
     function handleSubmit(e) {
         e.preventDefault();
+
+        let content = quill.getText();
+
+        
+
         let data = {
             title: title,
             subject: subject,
