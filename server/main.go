@@ -27,7 +27,7 @@ func main() {
 	{
 		noteRoutes.GET("/", noteController.FindNotes)
 		noteRoutes.GET("/:id", noteController.FindNoteByID)
-		// noteRoutes.POST("/", noteController.CreateNote)
+		noteRoutes.POST("/", noteController.CreateNote)
 		// noteRoutes.PATCH("/:id", noteController.UpdateNote)
 		// noteRoutes.DELETE("/:id", noteController.DeleteNote)
 	}

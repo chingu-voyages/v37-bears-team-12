@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
+	"notes-app/dto"
 	"notes-app/service"
 	"strconv"
 
@@ -11,6 +13,7 @@ import (
 type NoteController interface {
 	FindNotes(c *gin.Context)
 	FindNoteByID(c *gin.Context)
+	CreateNote(c *gin.Context)
 }
 
 // type NoteController interface {
@@ -54,11 +57,21 @@ func (controller *noteController) FindNoteByID(c *gin.Context) {
 }
 
 func (controller *noteController) CreateNote(c *gin.Context) {
+	var input dto.CreateNoteInput
 
-	c.JSON(http.StatusOK, gin.H{"data": ""})
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	fmt.Print(input)
+
+	note := controller.noteService.CreateNote(c, input)
+
+	c.JSON(http.StatusOK, gin.H{"data": note})
 }
 
-func (controller *noteController) UpdateNote(c *gin.Context) {
+// func (controller *noteController) UpdateNote(c *gin.Context) {
 
-	c.JSON(http.StatusOK, gin.H{"data": ""})
-}
+// 	c.JSON(http.StatusOK, gin.H{"data": ""})
+// }

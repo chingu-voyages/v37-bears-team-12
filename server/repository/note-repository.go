@@ -12,10 +12,10 @@ import (
 )
 
 type NoteRepository interface {
-	FindNotes(context *gin.Context) []*ent.Note
-	FindNoteByID(context *gin.Context, noteId int) *ent.Note
-	CreateNote(context *gin.Context, input dto.CreateNoteInput) string
-	UpdateNote(context *gin.Context, n model.Note) string
+	FindNotes(c *gin.Context) []*ent.Note
+	FindNoteByID(c *gin.Context, noteId int) *ent.Note
+	CreateNote(c *gin.Context, input dto.CreateNoteInput) *ent.Note
+	UpdateNote(c *gin.Context, n model.Note) string
 }
 
 type noteConnection struct {
@@ -29,7 +29,7 @@ func NewNoteRepository(dbConn *ent.Client) NoteRepository {
 	}
 }
 
-func (db *noteConnection) FindNotes(context *gin.Context) []*ent.Note {
+func (db *noteConnection) FindNotes(c *gin.Context) []*ent.Note {
 	// var Notes []entity.Note
 	// db.connection.Preload("User").Find(&Notes)
 	// return Notes
@@ -42,7 +42,7 @@ func (db *noteConnection) FindNotes(context *gin.Context) []*ent.Note {
 
 	// return items
 
-	notes, err := db.connection.Note.Query().All(context)
+	notes, err := db.connection.Note.Query().All(c)
 
 	if err != nil {
 		log.Fatalf("Error occurred")
@@ -59,26 +59,21 @@ func (db *noteConnection) FindNoteByID(c *gin.Context, NoteID int) *ent.Note {
 	return note
 }
 
-func (db *noteConnection) CreateNote(context *gin.Context, input dto.CreateNoteInput) string {
+func (db *noteConnection) CreateNote(c *gin.Context, input dto.CreateNoteInput) *ent.Note {
+	note, err := db.connection.Note.
+		Create().
+		SetTitle(input.Title).
+		SetContent(input.Content).
+		Save(c)
 
-	// fmt.Print(input)
+	if err != nil {
+		log.Fatalf("Failed creating a note: %v", err)
+	}
 
-	// // Create note
-	// note, err := db.connection.Note.
-	// 	Create().
-	// 	SetTitle(input.Title).
-	// 	SetContent(input.Content)
-
-	// if err != nil {
-	// 	log.Fatalf("Failed creating a note: %v", err)
-	// }
-
-	// //c.JSON(http.StatusOK, gin.H{"data": note})
-	// return note
-	return ""
+	return note
 }
 
-func (db *noteConnection) UpdateNote(context *gin.Context, b model.Note) string {
+func (db *noteConnection) UpdateNote(c *gin.Context, b model.Note) string {
 	// id, paramErr := strconv.Atoi(c.Param("id"))
 
 	// if paramErr != nil {
