@@ -1,14 +1,18 @@
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
-// or import 'quill/dist/quill.bubble.css'; // Add css for bubble theme
+// import 'quill/dist/quill.bubble.css'; // Add css for bubble theme
 import NavBar from "../components/NavBar";
 import { useEffect, useState } from "react";
 
 export default function edit() {
+    
+    const theme = 'snow';
     const [title, setTitle] = useState('')
-    const [subject, setSubject] = useState('')
-    const { quill, quillRef } = useQuill();
+    const [subject, setSubject] = useState('DEFAULT')
+    const { quill, quillRef } = useQuill({ theme });
     let content = "";
+
+    
 
     useEffect(() => {
         if (quill) {
@@ -63,8 +67,8 @@ export default function edit() {
                             <input className="h-full w-full placeholder-shown:text-2xl focus:outline-none" type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Enter Title"/>
                         </div>
                         <div className="h-1/2 flex items-center">
-                            <select className="h-full w-full text-gray-500 focus:outline-none "  id="subject" value={subject} onChange={e => setSubject(e.target.value)}>
-                                <option value="" disabled selected hidden>Choose a subject</option>
+                            <select className="h-full w-full text-gray-500 focus:outline-none"  id="subject" value={subject} onChange={e => setSubject(e.target.value)}>
+                                <option value="DEFAULT" disabled hidden>Choose a subject</option>
                                 <option value="Biology" >Biology</option>
                                 <option value="Calculus">Calculus</option>
                                 <option value="History">History</option>
