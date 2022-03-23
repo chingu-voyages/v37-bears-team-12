@@ -23,6 +23,7 @@ export default function notes({ data }) {
                             id={note.id}
                             created_at={note.created_at}
                             title={note.title}
+                            subject={note.subject}
                             content={note.content}
                         />
                     ))}
