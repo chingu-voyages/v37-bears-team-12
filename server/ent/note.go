@@ -20,6 +20,8 @@ type Note struct {
 	Title string `json:"title,omitempty"`
 	// Content holds the value of the "content" field.
 	Content string `json:"content,omitempty"`
+	// Subject holds the value of the "subject" field.
+	Subject string `json:"subject,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -33,7 +35,7 @@ func (*Note) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case note.FieldID:
 			values[i] = new(sql.NullInt64)
-		case note.FieldTitle, note.FieldContent:
+		case note.FieldTitle, note.FieldContent, note.FieldSubject:
 			values[i] = new(sql.NullString)
 		case note.FieldCreatedAt, note.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -69,6 +71,12 @@ func (n *Note) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field content", values[i])
 			} else if value.Valid {
 				n.Content = value.String
+			}
+		case note.FieldSubject:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field subject", values[i])
+			} else if value.Valid {
+				n.Subject = value.String
 			}
 		case note.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -114,6 +122,8 @@ func (n *Note) String() string {
 	builder.WriteString(n.Title)
 	builder.WriteString(", content=")
 	builder.WriteString(n.Content)
+	builder.WriteString(", subject=")
+	builder.WriteString(n.Subject)
 	builder.WriteString(", created_at=")
 	builder.WriteString(n.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")

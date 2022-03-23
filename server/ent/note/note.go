@@ -15,6 +15,8 @@ const (
 	FieldTitle = "title"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
+	// FieldSubject holds the string denoting the subject field in the database.
+	FieldSubject = "subject"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -28,6 +30,7 @@ var Columns = []string{
 	FieldID,
 	FieldTitle,
 	FieldContent,
+	FieldSubject,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }

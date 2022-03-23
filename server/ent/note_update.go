@@ -40,6 +40,26 @@ func (nu *NoteUpdate) SetContent(s string) *NoteUpdate {
 	return nu
 }
 
+// SetSubject sets the "subject" field.
+func (nu *NoteUpdate) SetSubject(s string) *NoteUpdate {
+	nu.mutation.SetSubject(s)
+	return nu
+}
+
+// SetNillableSubject sets the "subject" field if the given value is not nil.
+func (nu *NoteUpdate) SetNillableSubject(s *string) *NoteUpdate {
+	if s != nil {
+		nu.SetSubject(*s)
+	}
+	return nu
+}
+
+// ClearSubject clears the value of the "subject" field.
+func (nu *NoteUpdate) ClearSubject() *NoteUpdate {
+	nu.mutation.ClearSubject()
+	return nu
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (nu *NoteUpdate) SetUpdatedAt(t time.Time) *NoteUpdate {
 	nu.mutation.SetUpdatedAt(t)
@@ -166,6 +186,19 @@ func (nu *NoteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: note.FieldContent,
 		})
 	}
+	if value, ok := nu.mutation.Subject(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: note.FieldSubject,
+		})
+	}
+	if nu.mutation.SubjectCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: note.FieldSubject,
+		})
+	}
 	if value, ok := nu.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -201,6 +234,26 @@ func (nuo *NoteUpdateOne) SetTitle(s string) *NoteUpdateOne {
 // SetContent sets the "content" field.
 func (nuo *NoteUpdateOne) SetContent(s string) *NoteUpdateOne {
 	nuo.mutation.SetContent(s)
+	return nuo
+}
+
+// SetSubject sets the "subject" field.
+func (nuo *NoteUpdateOne) SetSubject(s string) *NoteUpdateOne {
+	nuo.mutation.SetSubject(s)
+	return nuo
+}
+
+// SetNillableSubject sets the "subject" field if the given value is not nil.
+func (nuo *NoteUpdateOne) SetNillableSubject(s *string) *NoteUpdateOne {
+	if s != nil {
+		nuo.SetSubject(*s)
+	}
+	return nuo
+}
+
+// ClearSubject clears the value of the "subject" field.
+func (nuo *NoteUpdateOne) ClearSubject() *NoteUpdateOne {
+	nuo.mutation.ClearSubject()
 	return nuo
 }
 
@@ -352,6 +405,19 @@ func (nuo *NoteUpdateOne) sqlSave(ctx context.Context) (_node *Note, err error) 
 			Type:   field.TypeString,
 			Value:  value,
 			Column: note.FieldContent,
+		})
+	}
+	if value, ok := nuo.mutation.Subject(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: note.FieldSubject,
+		})
+	}
+	if nuo.mutation.SubjectCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: note.FieldSubject,
 		})
 	}
 	if value, ok := nuo.mutation.UpdatedAt(); ok {
