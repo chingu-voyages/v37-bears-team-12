@@ -14,6 +14,7 @@ type NoteController interface {
 	FindNotes(c *gin.Context)
 	FindNoteByID(c *gin.Context)
 	CreateNote(c *gin.Context)
+	UpdateNote(c *gin.Context)
 }
 
 // type NoteController interface {
@@ -71,7 +72,22 @@ func (controller *noteController) CreateNote(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": note})
 }
 
-// func (controller *noteController) UpdateNote(c *gin.Context) {
+func (controller *noteController) UpdateNote(c *gin.Context) {
 
-// 	c.JSON(http.StatusOK, gin.H{"data": ""})
-// }
+	noteID, paramErr := strconv.Atoi(c.Param("id"))
+
+	if paramErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
+	}
+
+	var input dto.UpdateNoteInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	note := controller.noteService.UpdateNote(c, noteID, input)
+
+	c.JSON(http.StatusOK, gin.H{"data": note})
+}

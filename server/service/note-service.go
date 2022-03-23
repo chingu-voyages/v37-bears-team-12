@@ -9,10 +9,10 @@ import (
 )
 
 type NoteService interface {
-	FindNotes(context *gin.Context) []*ent.Note
-	FindNoteByID(context *gin.Context, noteID int) *ent.Note
-	CreateNote(context *gin.Context, input dto.CreateNoteInput) *ent.Note
-	UpdateNote(context *gin.Context, input dto.UpdateNoteInput) string
+	FindNotes(c *gin.Context) []*ent.Note
+	FindNoteByID(c *gin.Context, noteID int) *ent.Note
+	CreateNote(c *gin.Context, input dto.CreateNoteInput) *ent.Note
+	UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) *ent.Note
 }
 
 type noteService struct {
@@ -37,14 +37,6 @@ func (service *noteService) CreateNote(c *gin.Context, input dto.CreateNoteInput
 	return service.noteRepository.CreateNote(c, input)
 }
 
-func (service *noteService) UpdateNote(context *gin.Context, input dto.UpdateNoteInput) string {
-	// // Note := entity.Note{}
-	// // err := smapping.FillStruct(&Note, smapping.MapFields(&b))
-	// // if err != nil {
-	// // 	log.Fatalf("Failed map %v: ", err)
-	// // }
-	// // res := service.NoteRepository.UpdateNote(Note)
-	// service.noteRepository.UpdateNote(b)
-	return ""
-
+func (service *noteService) UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) *ent.Note {
+	return service.noteRepository.UpdateNote(c, noteID, input)
 }
