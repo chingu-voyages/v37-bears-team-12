@@ -58,7 +58,6 @@ const Index = () => {
                 view={authView}
                 socialLayout="horizontal"
                 socialButtonSize="xlarge"
-                
             />
           </div>
         </Space>

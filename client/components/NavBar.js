@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { supabase } from "../utils/supabaseClient";
 import { HomeIcon, DocumentIcon, DocumentAddIcon, InformationCircleIcon, LogoutIcon } from '@heroicons/react/solid'
 
-export default function TempNavBar() {
+export default function NavBar() {
     return (
         <aside className="content-between md:w-2/12 bg-[#A49EA2]">
             <div className="text-white flex flex-col fixed">
@@ -14,11 +15,11 @@ export default function TempNavBar() {
                     <Link href="/notes">
                         <a className="underline pl-4 mb-3 text-lg h-11 rounded-lg flex items-center hover:bg-black hover:opacity-25"><DocumentIcon className="h-6 w-6 mr-2"/>Notes</a>
                     </Link>
-                    <Link href='/edit'>
+                    <Link href='/create'>
                         <a className="underline pl-4 mb-3 text-lg h-11 rounded-lg flex items-center hover:bg-black hover:opacity-25"><DocumentAddIcon className="h-6 w-6 mr-2"/>Add a Note</a>
                     </Link>
                     
-                    <li className="pl-4 mb-3 text-lg h-11 flex items-center rounded-lg hover:bg-black hover:opacity-25"><LogoutIcon className="h-6 w-6 mr-2 mt-1"/>Sign Out</li>
+                    <li className="pl-4 mb-3 text-lg h-11 flex items-center rounded-lg hover:bg-black hover:opacity-25" onClick={() => supabase.auth.signOut()}><LogoutIcon className="h-6 w-6 mr-2 mt-1"/>Sign Out</li>
                 </ul>
             </div>
         </aside>
