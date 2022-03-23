@@ -106,6 +106,13 @@ func Content(v string) predicate.Note {
 	})
 }
 
+// Subject applies equality check predicate on the "subject" field. It's identical to SubjectEQ.
+func Subject(v string) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSubject), v))
+	})
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Note {
 	return predicate.Note(func(s *sql.Selector) {
@@ -339,6 +346,131 @@ func ContentEqualFold(v string) predicate.Note {
 func ContentContainsFold(v string) predicate.Note {
 	return predicate.Note(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldContent), v))
+	})
+}
+
+// SubjectEQ applies the EQ predicate on the "subject" field.
+func SubjectEQ(v string) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSubject), v))
+	})
+}
+
+// SubjectNEQ applies the NEQ predicate on the "subject" field.
+func SubjectNEQ(v string) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSubject), v))
+	})
+}
+
+// SubjectIn applies the In predicate on the "subject" field.
+func SubjectIn(vs ...string) predicate.Note {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Note(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldSubject), v...))
+	})
+}
+
+// SubjectNotIn applies the NotIn predicate on the "subject" field.
+func SubjectNotIn(vs ...string) predicate.Note {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Note(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldSubject), v...))
+	})
+}
+
+// SubjectGT applies the GT predicate on the "subject" field.
+func SubjectGT(v string) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldSubject), v))
+	})
+}
+
+// SubjectGTE applies the GTE predicate on the "subject" field.
+func SubjectGTE(v string) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldSubject), v))
+	})
+}
+
+// SubjectLT applies the LT predicate on the "subject" field.
+func SubjectLT(v string) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldSubject), v))
+	})
+}
+
+// SubjectLTE applies the LTE predicate on the "subject" field.
+func SubjectLTE(v string) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldSubject), v))
+	})
+}
+
+// SubjectContains applies the Contains predicate on the "subject" field.
+func SubjectContains(v string) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldSubject), v))
+	})
+}
+
+// SubjectHasPrefix applies the HasPrefix predicate on the "subject" field.
+func SubjectHasPrefix(v string) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldSubject), v))
+	})
+}
+
+// SubjectHasSuffix applies the HasSuffix predicate on the "subject" field.
+func SubjectHasSuffix(v string) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldSubject), v))
+	})
+}
+
+// SubjectIsNil applies the IsNil predicate on the "subject" field.
+func SubjectIsNil() predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSubject)))
+	})
+}
+
+// SubjectNotNil applies the NotNil predicate on the "subject" field.
+func SubjectNotNil() predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSubject)))
+	})
+}
+
+// SubjectEqualFold applies the EqualFold predicate on the "subject" field.
+func SubjectEqualFold(v string) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldSubject), v))
+	})
+}
+
+// SubjectContainsFold applies the ContainsFold predicate on the "subject" field.
+func SubjectContainsFold(v string) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldSubject), v))
 	})
 }
 

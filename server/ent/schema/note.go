@@ -17,6 +17,7 @@ func (Note) Fields() []ent.Field {
 	return []ent.Field{
 		field.Text("title").NotEmpty(),
 		field.Text("content").NotEmpty(),
+		field.Text("subject").Optional(),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Time("updated_at").Default(time.Now),
 	}

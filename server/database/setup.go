@@ -13,7 +13,7 @@ import (
 
 var CLIENT *ent.Client
 
-func ConnectDatabase() {
+func ConnectDatabase() *ent.Client {
 	godotenv.Load()
 	DB_CONNECTION_STRING := os.Getenv("DB_CONNECTION_STRING")
 	fmt.Println(DB_CONNECTION_STRING)
@@ -21,14 +21,13 @@ func ConnectDatabase() {
 	client, err := ent.Open("postgres", DB_CONNECTION_STRING)
 
 	if err != nil {
-		log.Fatal(err)
-		return
+		panic(err)
 	}
-
-	CLIENT = client
 
 	// Run the auto migration tool.
 	if err := client.Schema.Create(context.Background()); err != nil {
-		log.Fatalf("failed creating schema resources: %v", err)
+		log.Panicf("failed creating schema resources: %v", err)
 	}
+
+	return client
 }
