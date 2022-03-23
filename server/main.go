@@ -1,9 +1,8 @@
 package main
 
 import (
-	"notes-app/controllers"
 	"notes-app/database"
-	"notes-app/middleware"
+	"notes-app/repository"
 	"notes-app/service"
 
 	"github.com/gin-gonic/gin"
@@ -15,16 +14,19 @@ func main() {
 	r := gin.Default()
 
 	// Connect to database
-	database.ConnectDatabase()
+	db := database.ConnectDatabase()
 
-	noteRoutes := r.Group("/notes/", middleware.AuthorizeJWT(jwtService))
-	{
-		noteRoutes.GET("/", controllers.FindNotes)
-		noteRoutes.GET("/:id", controllers.FindNote)
-		noteRoutes.POST("/", controllers.CreateNote)
-		noteRoutes.PATCH("/:id", controllers.UpdateNote)
-		noteRoutes.DELETE("/:id", controllers.DeleteNote)
-	}
+	noteRepository := repository.NewNoteRepository(db)
+	noteService := service.NewNoteService(noteRepository)
+
+	// noteRoutes := r.Group("/notes/", middleware.AuthorizeJWT(jwtService))
+	// {
+	// 	noteRoutes.GET("/", controller.FindNotes)
+	// 	noteRoutes.GET("/:id", controller.FindNote)
+	// 	noteRoutes.POST("/", controller.CreateNote)
+	// 	noteRoutes.PATCH("/:id", controller.UpdateNote)
+	// 	noteRoutes.DELETE("/:id", controller.DeleteNote)
+	// }
 
 	// Run the server
 	r.Run()
