@@ -13,6 +13,7 @@ type NoteService interface {
 	FindNoteByID(c *gin.Context, noteID int) *ent.Note
 	CreateNote(c *gin.Context, input dto.CreateNoteInput) *ent.Note
 	UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) *ent.Note
+	DeleteNote(c *gin.Context, noteID int) string
 }
 
 type noteService struct {
@@ -39,4 +40,8 @@ func (service *noteService) CreateNote(c *gin.Context, input dto.CreateNoteInput
 
 func (service *noteService) UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) *ent.Note {
 	return service.noteRepository.UpdateNote(c, noteID, input)
+}
+
+func (service *noteService) DeleteNote(c *gin.Context, noteID int) string {
+	return service.noteRepository.DeleteNote(c, noteID)
 }

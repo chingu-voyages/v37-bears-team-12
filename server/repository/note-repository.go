@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"notes-app/dto"
 	"notes-app/ent"
@@ -16,6 +17,7 @@ type NoteRepository interface {
 	FindNoteByID(c *gin.Context, noteId int) *ent.Note
 	CreateNote(c *gin.Context, input dto.CreateNoteInput) *ent.Note
 	UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) *ent.Note
+	DeleteNote(c *gin.Context, noteID int) string
 }
 
 type noteConnection struct {
@@ -78,10 +80,10 @@ func (db *noteConnection) UpdateNote(c *gin.Context, noteID int, input dto.Updat
 	return note
 }
 
-// func DeleteNote(noteID int) string {
+func (db *noteConnection) DeleteNote(c *gin.Context, noteID int) string {
 
-// 	note := database.CLIENT.Note.DeleteOneID(noteID).Exec(c)
-// 	result := fmt.Sprintf("%v", note)
+	note := db.connection.Note.DeleteOneID(noteID).Exec(c)
+	result := fmt.Sprintf("%v", note)
 
-// 	return result
-// }
+	return result
+}

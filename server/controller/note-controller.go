@@ -15,6 +15,7 @@ type NoteController interface {
 	FindNoteByID(c *gin.Context)
 	CreateNote(c *gin.Context)
 	UpdateNote(c *gin.Context)
+	DeleteNote(c *gin.Context)
 }
 
 // type NoteController interface {
@@ -90,4 +91,21 @@ func (controller *noteController) UpdateNote(c *gin.Context) {
 	note := controller.noteService.UpdateNote(c, noteID, input)
 
 	c.JSON(http.StatusOK, gin.H{"data": note})
+}
+
+func (controller *noteController) DeleteNote(c *gin.Context) {
+
+	noteID, paramErr := strconv.Atoi(c.Param("id"))
+
+	if paramErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
+	}
+
+	result := controller.noteService.DeleteNote(c, noteID)
+
+	if result == "<nil>" {
+		c.JSON(http.StatusOK, gin.H{"data": "Note deleted successfully!"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"data": "Note not found"})
+	}
 }

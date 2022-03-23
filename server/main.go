@@ -29,7 +29,7 @@ func main() {
 		noteRoutes.GET("/:id", noteController.FindNoteByID)
 		noteRoutes.POST("/", noteController.CreateNote)
 		noteRoutes.PUT("/:id", noteController.UpdateNote)
-		// noteRoutes.DELETE("/:id", noteController.DeleteNote)
+		noteRoutes.DELETE("/:id", noteController.DeleteNote)
 	}
 
 	// Run the server
