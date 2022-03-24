@@ -1,8 +1,26 @@
 import Link from "next/link";
 import { supabase } from "../utils/supabaseClient";
 import { HomeIcon, DocumentIcon, DocumentAddIcon, InformationCircleIcon, LogoutIcon } from '@heroicons/react/solid'
+import { useEffect } from "react";
+import { redirect } from "next/dist/server/api-utils";
 
 export default function NavBar() {
+
+   
+    // useEffect(() => { 
+    //     const accessToken = localStorage.getItem('supabase.auth.token')
+    //     if (accessToken === null) {
+    //       console.log("there is no token")
+    //     } else {
+    //         console.log(accessToken)
+    //     }
+    //   }, [])
+
+    const signOut = () => {
+        supabase.auth.signOut()
+        window.location.assign('/');
+    }
+
     return (
         <aside className="content-between md:w-72 bg-[#A49EA2] ">
             <div className="text-white flex flex-col w-fit md:fixed">
@@ -19,7 +37,7 @@ export default function NavBar() {
                         <a className="underline pl-4 mb-3 text-lg h-11 rounded-lg flex items-center hover:bg-black hover:opacity-25"><DocumentAddIcon className="h-6 w-6 mr-2"/>Add a Note</a>
                     </Link>
                     
-                    <li className="pl-4 mb-3 text-lg h-11 flex items-center rounded-lg hover:bg-black hover:opacity-25" onClick={() => supabase.auth.signOut()}><LogoutIcon className="h-6 w-6 mr-2 mt-1"/>Sign Out</li>
+                    <li className="pl-4 mb-3 text-lg h-11 flex items-center rounded-lg hover:bg-black hover:opacity-25" onClick={signOut}><LogoutIcon className="h-6 w-6 mr-2 mt-1"/>Sign Out</li>
                 </ul>
             </div>
         </aside>
