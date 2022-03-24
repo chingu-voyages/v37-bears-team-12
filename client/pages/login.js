@@ -3,6 +3,8 @@ import useSWR from "swr";
 import { Auth, Card, Typography, Space, Button, Icon } from "@supabase/ui";
 import { supabase } from "../utils/supabaseClient";
 import { useEffect, useState } from "react";
+import { redirect } from "next/dist/server/api-utils";
+import dashboard from "./dashboard";
 
 const fetcher = (url, token) =>
   fetch(url, {
@@ -23,8 +25,8 @@ const Index = () => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === "PASSWORD_RECOVERY") setAuthView("forgotten_password");
-        if (event === "USER_UPDATED")
-          setTimeout(() => setAuthView("sign_in"), 1000);
+        // if (event === "USER_UPDATED")
+        //   setTimeout(() => setAuthView("sign_in"), 1000);
         // Send session to /api/auth route to set the auth cookie.
         // NOTE: this is only needed if you're doing SSR (getServerSideProps)!
         fetch("/api/auth", {
@@ -35,11 +37,16 @@ const Index = () => {
         }).then((res) => res.json());
       }
     );
-
+    
+    
     return () => {
       authListener.unsubscribe();
     };
   }, []);
+
+  if(user){
+    location.assign('/dashboard');
+  }
 
   const View = () => {
     if (!user)
@@ -49,7 +56,7 @@ const Index = () => {
             <div
             className="text-gray-800 text-2xl flex justify-center border-b-2 py-2 mb-4 text-white"
             >
-            Welcome to Whatever Note
+            Welcome to Coffee Note
             </div>
           </div>
           <div className="text-center">
@@ -68,7 +75,7 @@ const Index = () => {
         {authView === "forgotten_password" && (
           <Auth.UpdatePassword supabaseClient={supabase} />
         )}
-        {user && (
+        {/* {user && (
           <>
             <Typography.Text>You're signed in</Typography.Text>
             <Typography.Text strong>Email: {user.email}</Typography.Text>
@@ -105,7 +112,7 @@ const Index = () => {
               </Link>
             </Typography.Text>
           </>
-        )}
+        )} */}
       </Space>
     );
   };

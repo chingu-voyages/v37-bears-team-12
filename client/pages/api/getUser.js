@@ -8,6 +8,7 @@ const getUser = async (req, res) => {
 
   if (error) return res.status(401).json({ error: error.message });
   return res.status(200).json(user);
+  
 };
 
 export default getUser;
