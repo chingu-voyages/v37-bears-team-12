@@ -37,7 +37,7 @@ export default function notes() {
         <div className="flex flex-col md:flex-row">
             <NavBar />
 
-            <main className="md:w-10/12 bg-cover bg-[url('/images/coffee-notebook.jpg')]">
+            <main className="md:w-10/12 bg-cover bg-[url('/images/coffee-notebook.jpg')] min-h-screen">
                 <GreetingDate />
 
                 <section className="w-11/12 mx-auto text-black bg-white opacity-75 rounded-3xl text-2xl p-2">
