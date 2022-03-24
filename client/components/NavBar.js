@@ -3,7 +3,8 @@ import { supabase } from "../utils/supabaseClient";
 import { HomeIcon, DocumentIcon, DocumentAddIcon, InformationCircleIcon, LogoutIcon } from '@heroicons/react/solid'
 import { useEffect } from "react";
 import { redirect } from "next/dist/server/api-utils";
-
+import logo from '../public/images/CoffeeNotes-logos.jpeg'
+import Image from "next/image";
 export default function NavBar() {
 
    
@@ -24,7 +25,12 @@ export default function NavBar() {
     return (
         <aside className="content-between md:w-72 bg-[#A49EA2] ">
             <div className="text-white flex flex-col w-fit md:fixed">
-                <h2 className="text-3xl mb-4 ml-4 mt-6 whitespace-normal">Coffee Notes</h2>
+                <div className="flex flex-col items-center">
+                    <div className="h-14 w-14 rounded-full ml-2 mt-2">
+                        <Image src={logo} alt='logo' className="h-full w-full rounded-full"/>
+                    </div>
+                    <h2 className="text-3xl mb-4 ml-4 mt-6 whitespace-normal">Coffee Notes</h2>
+                </div>
                 <h3 className="mb-4 text-2xl ml-4 whitespace-normal">User Name</h3>
                 <ul className="flex flex-col">
                     <Link href="/dashboard">
