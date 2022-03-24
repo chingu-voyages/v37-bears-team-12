@@ -28,7 +28,7 @@ export default function dashboard({data}) {
         <div className="flex flex-col md:flex-row">
             <NavBar />
 
-            <main className="md:w-10/12 bg-cover bg-[url('/images/coffee-notebook.jpg')] h-screen">
+            <main className="md:w-full bg-cover bg-[url('/images/coffee-notebook.jpg')] min-h-screen">
                 <GreetingDate />
 
                 <h1 className="w-11/12 mx-auto text-center text-black bg-white opacity-75 rounded-3xl text-2xl p-2">
