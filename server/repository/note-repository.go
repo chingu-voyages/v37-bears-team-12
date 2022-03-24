@@ -16,7 +16,7 @@ import (
 )
 
 type NoteRepository interface {
-	FindNotes(c *gin.Context, userID uuid.UUID) []*ent.Note
+	FindNotes(c *gin.Context, userID uuid.UUID, subject string) []*ent.Note
 	FindNoteByID(c *gin.Context, noteId uuid.UUID, userID uuid.UUID) *ent.Note
 	CreateNote(c *gin.Context, input dto.CreateNoteInput, userID uuid.UUID) (*ent.Note, error)
 	UpdateNote(c *gin.Context, input dto.UpdateNoteInput, noteID uuid.UUID, userID uuid.UUID) (*ent.Note, error)
@@ -34,14 +34,30 @@ func NewNoteRepository(dbConn *ent.Client) NoteRepository {
 	}
 }
 
-func (db *noteConnection) FindNotes(c *gin.Context, userID uuid.UUID) []*ent.Note {
-	notes, err := db.connection.Note.Query().Where(note.UserID(userID)).All(c)
+func (db *noteConnection) FindNotes(c *gin.Context, userID uuid.UUID, subject string) []*ent.Note {
+	fmt.Println("Getting note")
+	fmt.Println(subject)
 
-	if err != nil {
-		log.Fatalf("Error occurred")
+	if subject == "" {
+		notes, err := db.connection.Note.Query().Where(note.UserID(userID)).All(c)
+
+		if err != nil {
+			log.Fatalf("Error occurred")
+		}
+
+		return notes
+	} else {
+		notes, err := db.connection.Note.Query().Where(note.And(
+			note.UserID(userID),
+			note.Subject(subject),
+		)).All(c)
+
+		if err != nil {
+			log.Fatalf("Error occurred")
+		}
+
+		return notes
 	}
-
-	return notes
 }
 
 func (db *noteConnection) FindNoteByID(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) *ent.Note {

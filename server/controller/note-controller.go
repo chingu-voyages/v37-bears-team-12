@@ -37,13 +37,14 @@ func NewNoteController(noteService service.NoteService, jwtService service.JWTSe
 // Find all notes
 func (controller *noteController) FindNotes(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
+	subject, _ := c.GetQuery("subject")
 
 	userID, paramErr := uuid.Parse(controller.getUserIDByToken(authHeader))
 	if paramErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
 	}
 
-	notes := controller.noteService.FindNotes(c, userID)
+	notes := controller.noteService.FindNotes(c, userID, subject)
 
 	c.JSON(http.StatusOK, gin.H{"data": notes})
 }
