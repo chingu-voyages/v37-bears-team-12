@@ -40,7 +40,7 @@ export default function Note() {
                 <div>
                     <div className="flex flex-col md:flex-row">
                         <NavBar />
-                        <main className="md:w-10/12 bg-cover bg-[url('/images/coffee-notebook.jpg')] h-screen">
+                        <main className="md:w-full bg-cover bg-[url('/images/coffee-notebook.jpg')] min-h-screen">
                             <GreetingDate />
                             <div className="w-11/12 mx-auto text-left text-black bg-white opacity-75 rounded-3xl p-2">
                                 <h1 className="text-2xl">

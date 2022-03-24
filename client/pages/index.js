@@ -26,10 +26,11 @@ export default function Home() {
                     </nav>
                 </header>
                 <main className="flex flex-col items-center">
-                    <div className="flex h-screen justify-center items-center ">
+                    <div className="flex h-screen justify-center items-center flex-col">
                         <h1 className="text-3xl md:text-7xl">
-                            Whatever Note
+                            Coffee Notes
                         </h1>
+                        <p className="text-xl">Brew your Thoughts</p>
                     </div>
                     <div className="w-9/12 h-fit flex items-center flex-col bg-slate-50/50 rounded-lg ">
                             <h1 ref={aboutRef} className="m-16 md:text-6xl">About</h1>
