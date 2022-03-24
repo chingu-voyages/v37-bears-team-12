@@ -10,7 +10,8 @@ import (
 var (
 	// NotesColumns holds the columns for the "notes" table.
 	NotesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "user_id", Type: field.TypeUUID},
 		{Name: "title", Type: field.TypeString, Size: 2147483647},
 		{Name: "content", Type: field.TypeString, Size: 2147483647},
 		{Name: "subject", Type: field.TypeString, Nullable: true, Size: 2147483647},

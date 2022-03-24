@@ -7,31 +7,32 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.Note {
+func ID(id uuid.UUID) predicate.Note {
 	return predicate.Note(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.Note {
+func IDEQ(id uuid.UUID) predicate.Note {
 	return predicate.Note(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.Note {
+func IDNEQ(id uuid.UUID) predicate.Note {
 	return predicate.Note(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldID), id))
 	})
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.Note {
+func IDIn(ids ...uuid.UUID) predicate.Note {
 	return predicate.Note(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
@@ -48,7 +49,7 @@ func IDIn(ids ...int) predicate.Note {
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.Note {
+func IDNotIn(ids ...uuid.UUID) predicate.Note {
 	return predicate.Note(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
@@ -65,30 +66,37 @@ func IDNotIn(ids ...int) predicate.Note {
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.Note {
+func IDGT(id uuid.UUID) predicate.Note {
 	return predicate.Note(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldID), id))
 	})
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.Note {
+func IDGTE(id uuid.UUID) predicate.Note {
 	return predicate.Note(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldID), id))
 	})
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.Note {
+func IDLT(id uuid.UUID) predicate.Note {
 	return predicate.Note(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldID), id))
 	})
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.Note {
+func IDLTE(id uuid.UUID) predicate.Note {
 	return predicate.Note(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldID), id))
+	})
+}
+
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v uuid.UUID) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldUserID), v))
 	})
 }
 
@@ -124,6 +132,82 @@ func CreatedAt(v time.Time) predicate.Note {
 func UpdatedAt(v time.Time) predicate.Note {
 	return predicate.Note(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldUpdatedAt), v))
+	})
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v uuid.UUID) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldUserID), v))
+	})
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v uuid.UUID) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldUserID), v))
+	})
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...uuid.UUID) predicate.Note {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Note(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldUserID), v...))
+	})
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...uuid.UUID) predicate.Note {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Note(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldUserID), v...))
+	})
+}
+
+// UserIDGT applies the GT predicate on the "user_id" field.
+func UserIDGT(v uuid.UUID) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldUserID), v))
+	})
+}
+
+// UserIDGTE applies the GTE predicate on the "user_id" field.
+func UserIDGTE(v uuid.UUID) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldUserID), v))
+	})
+}
+
+// UserIDLT applies the LT predicate on the "user_id" field.
+func UserIDLT(v uuid.UUID) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldUserID), v))
+	})
+}
+
+// UserIDLTE applies the LTE predicate on the "user_id" field.
+func UserIDLTE(v uuid.UUID) predicate.Note {
+	return predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldUserID), v))
 	})
 }
 

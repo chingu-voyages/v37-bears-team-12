@@ -12,14 +12,12 @@ import (
 )
 
 var (
-	db *ent.Client = database.ConnectDatabase()
-
-	noteRepository repository.NoteRepository = repository.NewNoteRepository(db)
-	jwtService     service.JWTService        = service.NewJWTService()
-
-	noteService service.NoteService = service.NewNoteService(noteRepository)
+	db         *ent.Client        = database.ConnectDatabase()
+	jwtService service.JWTService = service.NewJWTService()
 
 	noteController controller.NoteController = controller.NewNoteController(noteService, jwtService)
+	noteService    service.NoteService       = service.NewNoteService(noteRepository)
+	noteRepository repository.NoteRepository = repository.NewNoteRepository(db)
 )
 
 func main() {

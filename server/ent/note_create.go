@@ -11,6 +11,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // NoteCreate is the builder for creating a Note entity.
@@ -18,6 +19,12 @@ type NoteCreate struct {
 	config
 	mutation *NoteMutation
 	hooks    []Hook
+}
+
+// SetUserID sets the "user_id" field.
+func (nc *NoteCreate) SetUserID(u uuid.UUID) *NoteCreate {
+	nc.mutation.SetUserID(u)
+	return nc
 }
 
 // SetTitle sets the "title" field.
@@ -70,6 +77,20 @@ func (nc *NoteCreate) SetUpdatedAt(t time.Time) *NoteCreate {
 func (nc *NoteCreate) SetNillableUpdatedAt(t *time.Time) *NoteCreate {
 	if t != nil {
 		nc.SetUpdatedAt(*t)
+	}
+	return nc
+}
+
+// SetID sets the "id" field.
+func (nc *NoteCreate) SetID(u uuid.UUID) *NoteCreate {
+	nc.mutation.SetID(u)
+	return nc
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (nc *NoteCreate) SetNillableID(u *uuid.UUID) *NoteCreate {
+	if u != nil {
+		nc.SetID(*u)
 	}
 	return nc
 }
@@ -153,10 +174,17 @@ func (nc *NoteCreate) defaults() {
 		v := note.DefaultUpdatedAt()
 		nc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := nc.mutation.ID(); !ok {
+		v := note.DefaultID()
+		nc.mutation.SetID(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (nc *NoteCreate) check() error {
+	if _, ok := nc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Note.user_id"`)}
+	}
 	if _, ok := nc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "Note.title"`)}
 	}
@@ -190,8 +218,13 @@ func (nc *NoteCreate) sqlSave(ctx context.Context) (*Note, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
+		}
+	}
 	return _node, nil
 }
 
@@ -201,11 +234,23 @@ func (nc *NoteCreate) createSpec() (*Note, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: note.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: note.FieldID,
 			},
 		}
 	)
+	if id, ok := nc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = &id
+	}
+	if value, ok := nc.mutation.UserID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: note.FieldUserID,
+		})
+		_node.UserID = value
+	}
 	if value, ok := nc.mutation.Title(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -291,10 +336,6 @@ func (ncb *NoteCreateBulk) Save(ctx context.Context) ([]*Note, error) {
 				}
 				mutation.id = &nodes[i].ID
 				mutation.done = true
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				return nodes[i], nil
 			})
 			for i := len(builder.hooks) - 1; i >= 0; i-- {

@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // NoteQuery is the builder for querying Note entities.
@@ -84,8 +85,8 @@ func (nq *NoteQuery) FirstX(ctx context.Context) *Note {
 
 // FirstID returns the first Note ID from the query.
 // Returns a *NotFoundError when no Note ID was found.
-func (nq *NoteQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (nq *NoteQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = nq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -97,7 +98,7 @@ func (nq *NoteQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (nq *NoteQuery) FirstIDX(ctx context.Context) int {
+func (nq *NoteQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := nq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -135,8 +136,8 @@ func (nq *NoteQuery) OnlyX(ctx context.Context) *Note {
 // OnlyID is like Only, but returns the only Note ID in the query.
 // Returns a *NotSingularError when more than one Note ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (nq *NoteQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (nq *NoteQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = nq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -152,7 +153,7 @@ func (nq *NoteQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (nq *NoteQuery) OnlyIDX(ctx context.Context) int {
+func (nq *NoteQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := nq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -178,8 +179,8 @@ func (nq *NoteQuery) AllX(ctx context.Context) []*Note {
 }
 
 // IDs executes the query and returns a list of Note IDs.
-func (nq *NoteQuery) IDs(ctx context.Context) ([]int, error) {
-	var ids []int
+func (nq *NoteQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	var ids []uuid.UUID
 	if err := nq.Select(note.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -187,7 +188,7 @@ func (nq *NoteQuery) IDs(ctx context.Context) ([]int, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (nq *NoteQuery) IDsX(ctx context.Context) []int {
+func (nq *NoteQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := nq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -254,12 +255,12 @@ func (nq *NoteQuery) Clone() *NoteQuery {
 // Example:
 //
 //	var v []struct {
-//		Title string `json:"title,omitempty"`
+//		UserID uuid.UUID `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Note.Query().
-//		GroupBy(note.FieldTitle).
+//		GroupBy(note.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -281,11 +282,11 @@ func (nq *NoteQuery) GroupBy(field string, fields ...string) *NoteGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Title string `json:"title,omitempty"`
+//		UserID uuid.UUID `json:"user_id,omitempty"`
 //	}
 //
 //	client.Note.Query().
-//		Select(note.FieldTitle).
+//		Select(note.FieldUserID).
 //		Scan(ctx, &v)
 //
 func (nq *NoteQuery) Select(fields ...string) *NoteSelect {
@@ -358,7 +359,7 @@ func (nq *NoteQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   note.Table,
 			Columns: note.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: note.FieldID,
 			},
 		},

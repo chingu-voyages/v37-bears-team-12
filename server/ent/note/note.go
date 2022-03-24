@@ -4,6 +4,8 @@ package note
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -11,6 +13,8 @@ const (
 	Label = "note"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
 	// FieldContent holds the string denoting the content field in the database.
@@ -28,6 +32,7 @@ const (
 // Columns holds all SQL columns for note fields.
 var Columns = []string{
 	FieldID,
+	FieldUserID,
 	FieldTitle,
 	FieldContent,
 	FieldSubject,
@@ -54,4 +59,6 @@ var (
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID func() uuid.UUID
 )
