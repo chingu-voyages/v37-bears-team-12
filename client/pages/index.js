@@ -1,5 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import React, { useRef } from "react";
+
+import logo from '../public/images/CoffeeNotes-logos.jpeg'
 
 export default function Home() {
     
@@ -12,8 +15,10 @@ export default function Home() {
     return (
         <div className="h-screen bg-cover bg-[url('/images/coffee-notebook.jpg')] overflow-auto">
             <div className="flex flex-col">
-                <header className="flex justify-between items-center fixed w-screen">
-                    <span className="px-5 text-xl">LOGO</span>
+                <header className="flex justify-end items-center fixed w-screen">
+                    {/* <div className="h-14 w-14 rounded-full ml-2 mt-2">
+                        <Image src={logo} alt='logo' className="h-full w-full rounded-full"/>
+                    </div> */}
                     <nav className="text-sm md:text-xl py-4">
                         <ul className="flex">
                             <Link href="/login">
@@ -27,6 +32,9 @@ export default function Home() {
                 </header>
                 <main className="flex flex-col items-center">
                     <div className="flex h-screen justify-center items-center flex-col">
+                        <div className="h-14 w-14 rounded-full ml-2 mt-2">
+                            <Image src={logo} alt='logo' className="h-full w-full rounded-full"/>
+                        </div>
                         <h1 className="text-3xl md:text-7xl">
                             Coffee Notes
                         </h1>
