@@ -7,6 +7,7 @@ import (
 	"notes-app/dto"
 	"notes-app/ent"
 	"notes-app/ent/note"
+	"reflect"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -75,11 +76,13 @@ func (db *noteConnection) UpdateNote(c *gin.Context, input dto.UpdateNoteInput, 
 }
 
 func (db *noteConnection) DeleteNote(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) string {
+	note := db.connection.Note.DeleteOneID(noteID).Exec(c)
 
-	noteToDelete := db.connection.Note.Query().Where(note.ID(noteID)).OnlyX(c)
+	if reflect.TypeOf(note) == nil {
+		return fmt.Sprintf("%v", note)
+	}
 
-	note := db.connection.Note.DeleteOneID(noteToDelete.ID).Exec(c)
-	result := fmt.Sprintf("%v", note)
+	result := fmt.Sprintf("%v", note.Error())
 
 	return result
 }
