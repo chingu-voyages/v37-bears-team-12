@@ -1,4 +1,4 @@
-import NotesCard from "../components/notesCard";
+import NoteCard from "../components/noteCard";
 import GreetingDate from "../components/greetingDate";
 import NavBar from "../components/NavBar";
 
@@ -38,7 +38,7 @@ export default function dashboard({data}) {
                 <section className="bg-white w-11/12 opacity-75 rounded-3xl mx-auto my-8">
                     <div className="flex flex-wrap justify-around">
                     {recentNotes.map(note => (
-                        <NotesCard
+                        <NoteCard
                             key={note.id}
                             id={note.id}
                             created_at={note.created_at}
