@@ -4,15 +4,12 @@ import "quill/dist/quill.snow.css";
 import NavBar from "../components/NavBar";
 import { useEffect, useState } from "react";
 
-export default function edit() {
+export default function create() {
     
     const theme = 'snow';
     const [title, setTitle] = useState('')
     const [subject, setSubject] = useState('DEFAULT')
     const { quill, quillRef } = useQuill({ theme });
-    
-
-    
 
     // useEffect(() => {
     //     if (quill) {
@@ -33,15 +30,11 @@ export default function edit() {
 
         let content = quill.getText();
 
-        
-
         let data = {
             title: title,
             subject: subject,
             content: content,
-            user_id: 1,
         };
-
         
         console.log(title)
         console.log(subject)
@@ -90,10 +83,6 @@ export default function edit() {
                         Submit
                     </button>
                 </form>
-
-
-
-
             </main>
         </div>
     );

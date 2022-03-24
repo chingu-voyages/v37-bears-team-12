@@ -13,7 +13,6 @@
         <li><a href="#links">Links</a></li>
       </ul>
     </li>
-    <li><a href="#installation">Installation</a></li>
     <li><a href="#development-team">Development Team</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#questions">Questions</a></li>
@@ -23,11 +22,14 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-CoffeeNotes is a full-stack application that allows students to take notes for their classes. Notes are organized by subject and include a title and content. <!-- ADD MORE --> !!TO DO!! CoffeeNotes was created as part of [Chingu](https://www.chingu.io/) Voyage 37 to allow the developers to apply their technical and soft skills.
+CoffeeNotes is a full-stack application that allows students to take notes for their classes. Notes are organized by subject and include a title and content. CoffeeNotes was created as part of [Chingu](https://www.chingu.io/) Voyage 37.
 
 ### Features
-* List of features - !!TO DO!!
-* Landing page that includes information about the developers and application
+* Users are able to create and edit notes using a powerful rich text editor
+* Users are able to read and delete notes
+* Users can filter notes by subject
+* Users are able to sign-up, log-in and log-out
+* Users can view a landing page that includes information about the developers and application
 
 ### Built With
 * [Next.js](https://nextjs.org/)
@@ -37,6 +39,7 @@ CoffeeNotes is a full-stack application that allows students to take notes for t
 * [Quill](https://quilljs.com/)
 * [Go](https://go.dev/)
 * [Supabase](https://supabase.com/)
+* [PostgreSQL](https://www.postgresql.org/)
 * HTML, CSS, JavaScript 
 
 ### Screenshots
@@ -55,10 +58,6 @@ CoffeeNotes is a full-stack application that allows students to take notes for t
 ### Links
 - [GitHub repository](https://github.com/chingu-voyages/v37-bears-team-12)
 - [Deployed application]()
-
-<!-- INSTALLATION -->
-## Installation
-To be updated.
 
 <!-- DEVELOPMENT TEAM -->
 ## Development Team
