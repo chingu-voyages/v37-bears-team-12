@@ -11,6 +11,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
+
 	"entgo.io/ent"
 )
 
@@ -31,7 +33,8 @@ type NoteMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int
+	id            *uuid.UUID
+	user_id       *uuid.UUID
 	title         *string
 	content       *string
 	subject       *string
@@ -63,7 +66,7 @@ func newNoteMutation(c config, op Op, opts ...noteOption) *NoteMutation {
 }
 
 // withNoteID sets the ID field of the mutation.
-func withNoteID(id int) noteOption {
+func withNoteID(id uuid.UUID) noteOption {
 	return func(m *NoteMutation) {
 		var (
 			err   error
@@ -113,9 +116,15 @@ func (m NoteMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Note entities.
+func (m *NoteMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *NoteMutation) ID() (id int, exists bool) {
+func (m *NoteMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -126,12 +135,12 @@ func (m *NoteMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *NoteMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *NoteMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []uuid.UUID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -139,6 +148,42 @@ func (m *NoteMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetUserID sets the "user_id" field.
+func (m *NoteMutation) SetUserID(u uuid.UUID) {
+	m.user_id = &u
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *NoteMutation) UserID() (r uuid.UUID, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the Note entity.
+// If the Note object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NoteMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *NoteMutation) ResetUserID() {
+	m.user_id = nil
 }
 
 // SetTitle sets the "title" field.
@@ -353,7 +398,10 @@ func (m *NoteMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NoteMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
+	if m.user_id != nil {
+		fields = append(fields, note.FieldUserID)
+	}
 	if m.title != nil {
 		fields = append(fields, note.FieldTitle)
 	}
@@ -377,6 +425,8 @@ func (m *NoteMutation) Fields() []string {
 // schema.
 func (m *NoteMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case note.FieldUserID:
+		return m.UserID()
 	case note.FieldTitle:
 		return m.Title()
 	case note.FieldContent:
@@ -396,6 +446,8 @@ func (m *NoteMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *NoteMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case note.FieldUserID:
+		return m.OldUserID(ctx)
 	case note.FieldTitle:
 		return m.OldTitle(ctx)
 	case note.FieldContent:
@@ -415,6 +467,13 @@ func (m *NoteMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *NoteMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case note.FieldUserID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
 	case note.FieldTitle:
 		v, ok := value.(string)
 		if !ok {
@@ -508,6 +567,9 @@ func (m *NoteMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *NoteMutation) ResetField(name string) error {
 	switch name {
+	case note.FieldUserID:
+		m.ResetUserID()
+		return nil
 	case note.FieldTitle:
 		m.ResetTitle()
 		return nil

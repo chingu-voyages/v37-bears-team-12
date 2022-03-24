@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // NoteUpdate is the builder for updating Note entities.
@@ -25,6 +26,12 @@ type NoteUpdate struct {
 // Where appends a list predicates to the NoteUpdate builder.
 func (nu *NoteUpdate) Where(ps ...predicate.Note) *NoteUpdate {
 	nu.mutation.Where(ps...)
+	return nu
+}
+
+// SetUserID sets the "user_id" field.
+func (nu *NoteUpdate) SetUserID(u uuid.UUID) *NoteUpdate {
+	nu.mutation.SetUserID(u)
 	return nu
 }
 
@@ -160,7 +167,7 @@ func (nu *NoteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   note.Table,
 			Columns: note.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: note.FieldID,
 			},
 		},
@@ -171,6 +178,13 @@ func (nu *NoteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := nu.mutation.UserID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: note.FieldUserID,
+		})
 	}
 	if value, ok := nu.mutation.Title(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -223,6 +237,12 @@ type NoteUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *NoteMutation
+}
+
+// SetUserID sets the "user_id" field.
+func (nuo *NoteUpdateOne) SetUserID(u uuid.UUID) *NoteUpdateOne {
+	nuo.mutation.SetUserID(u)
+	return nuo
 }
 
 // SetTitle sets the "title" field.
@@ -364,7 +384,7 @@ func (nuo *NoteUpdateOne) sqlSave(ctx context.Context) (_node *Note, err error) 
 			Table:   note.Table,
 			Columns: note.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: note.FieldID,
 			},
 		},
@@ -392,6 +412,13 @@ func (nuo *NoteUpdateOne) sqlSave(ctx context.Context) (_node *Note, err error) 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := nuo.mutation.UserID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: note.FieldUserID,
+		})
 	}
 	if value, ok := nuo.mutation.Title(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

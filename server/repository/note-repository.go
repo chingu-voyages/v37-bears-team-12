@@ -10,14 +10,16 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/google/uuid"
 )
 
 type NoteRepository interface {
-	FindNotes(c *gin.Context) []*ent.Note
-	FindNoteByID(c *gin.Context, noteId int) *ent.Note
-	CreateNote(c *gin.Context, input dto.CreateNoteInput) (*ent.Note, error)
-	UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) (*ent.Note, error)
-	DeleteNote(c *gin.Context, noteID int) string
+	FindNotes(c *gin.Context, userID uuid.UUID) []*ent.Note
+	FindNoteByID(c *gin.Context, noteId uuid.UUID, userID uuid.UUID) *ent.Note
+	CreateNote(c *gin.Context, input dto.CreateNoteInput, userID uuid.UUID) (*ent.Note, error)
+	UpdateNote(c *gin.Context, input dto.UpdateNoteInput, noteID uuid.UUID, userID uuid.UUID) (*ent.Note, error)
+	DeleteNote(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) string
 }
 
 type noteConnection struct {
@@ -31,8 +33,8 @@ func NewNoteRepository(dbConn *ent.Client) NoteRepository {
 	}
 }
 
-func (db *noteConnection) FindNotes(c *gin.Context) []*ent.Note {
-	notes, err := db.connection.Note.Query().All(c)
+func (db *noteConnection) FindNotes(c *gin.Context, userID uuid.UUID) []*ent.Note {
+	notes, err := db.connection.Note.Query().Where(note.UserID(userID)).All(c)
 
 	if err != nil {
 		log.Fatalf("Error occurred")
@@ -41,24 +43,27 @@ func (db *noteConnection) FindNotes(c *gin.Context) []*ent.Note {
 	return notes
 }
 
-func (db *noteConnection) FindNoteByID(c *gin.Context, NoteID int) *ent.Note {
+func (db *noteConnection) FindNoteByID(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) *ent.Note {
 	note, _ := db.connection.Note.Query().
-		Where(note.ID(NoteID)).
+		Where(note.ID(noteID)).
 		First(context.Background())
 
 	return note
 }
 
-func (db *noteConnection) CreateNote(c *gin.Context, input dto.CreateNoteInput) (*ent.Note, error) {
+func (db *noteConnection) CreateNote(c *gin.Context, input dto.CreateNoteInput, userID uuid.UUID) (*ent.Note, error) {
 	note, err := db.connection.Note.Create().
+		SetID(uuid.New()).
+		SetUserID(userID).
 		SetTitle(input.Title).
 		SetContent(input.Content).
+		SetSubject(input.Subject).
 		Save(c)
 
 	return note, err
 }
 
-func (db *noteConnection) UpdateNote(c *gin.Context, noteID int, input dto.UpdateNoteInput) (*ent.Note, error) {
+func (db *noteConnection) UpdateNote(c *gin.Context, input dto.UpdateNoteInput, noteID uuid.UUID, userID uuid.UUID) (*ent.Note, error) {
 	note, err := db.connection.Note.UpdateOneID(noteID).
 		SetTitle(input.Title).
 		SetContent(input.Content).
@@ -69,9 +74,11 @@ func (db *noteConnection) UpdateNote(c *gin.Context, noteID int, input dto.Updat
 	return note, err
 }
 
-func (db *noteConnection) DeleteNote(c *gin.Context, noteID int) string {
+func (db *noteConnection) DeleteNote(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) string {
 
-	note := db.connection.Note.DeleteOneID(noteID).Exec(c)
+	noteToDelete := db.connection.Note.Query().Where(note.ID(noteID)).OnlyX(c)
+
+	note := db.connection.Note.DeleteOneID(noteToDelete.ID).Exec(c)
 	result := fmt.Sprintf("%v", note)
 
 	return result
