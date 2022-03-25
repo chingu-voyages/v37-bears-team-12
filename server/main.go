@@ -8,7 +8,6 @@ import (
 	"notes-app/repository"
 	"notes-app/service"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,8 +23,8 @@ var (
 func main() {
 
 	r := gin.Default()
+	r.Use(middleware.CORSMiddleware())
 
-	r.Use(cors.Default())
 	// Connect to database
 	database.ConnectDatabase()
 
