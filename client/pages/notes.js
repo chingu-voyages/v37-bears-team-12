@@ -5,6 +5,19 @@ import { useEffect, useState } from "react";
 
 export default function notes() {
     
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    useEffect(() => {
+        let accessToken = localStorage.getItem("supabase.auth.token");
+        if (accessToken === null) {
+            window.location.assign("/");
+        } else {
+            setLoggedIn(true);
+            accessToken = JSON.parse(accessToken);
+            let user_id = accessToken.currentSession.user.id;
+        }
+    }, []);
+
     const [notes, setNotes] = useState([]);
     const [subject, setSubject] = useState('*');
 
@@ -34,6 +47,8 @@ export default function notes() {
     },[subject]);
 
     return (
+        <>
+        {loggedIn && (
         <div className="flex flex-col md:flex-row">
             <NavBar />
 
@@ -74,6 +89,8 @@ export default function notes() {
                     ))}
                 </section>
             </main>
-        </div>
+        </div>)
+        }
+        </>
     );
 }
