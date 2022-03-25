@@ -37,13 +37,14 @@ func NewNoteController(noteService service.NoteService, jwtService service.JWTSe
 // Find all notes
 func (controller *noteController) FindNotes(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
+	subject, _ := c.GetQuery("subject")
 
 	userID, paramErr := uuid.Parse(controller.getUserIDByToken(authHeader))
 	if paramErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
 	}
 
-	notes := controller.noteService.FindNotes(c, userID)
+	notes, _ := controller.noteService.FindNotes(c, userID, subject)
 
 	c.JSON(http.StatusOK, gin.H{"data": notes})
 }
@@ -62,9 +63,13 @@ func (controller *noteController) FindNoteByID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
 	}
 
-	note := controller.noteService.FindNoteByID(c, noteID, userID)
+	note, _ := controller.noteService.FindNoteByID(c, noteID, userID)
 
-	c.JSON(http.StatusOK, gin.H{"data": note})
+	if note == nil {
+		c.JSON(http.StatusOK, gin.H{"data": "Note not found"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"data": note})
+	}
 }
 
 func (controller *noteController) CreateNote(c *gin.Context) {
@@ -139,7 +144,7 @@ func (controller *noteController) DeleteNote(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
 	}
 
-	result := controller.noteService.DeleteNote(c, noteID, userID)
+	result, _ := controller.noteService.DeleteNote(c, noteID, userID)
 
 	if result == "<nil>" {
 		c.JSON(http.StatusOK, gin.H{"data": "Note deleted successfully!"})

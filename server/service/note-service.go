@@ -10,11 +10,11 @@ import (
 )
 
 type NoteService interface {
-	FindNotes(c *gin.Context, userID uuid.UUID) []*ent.Note
-	FindNoteByID(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) *ent.Note
+	FindNotes(c *gin.Context, userID uuid.UUID, subject string) ([]*ent.Note, error)
+	FindNoteByID(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) (*ent.Note, error)
 	CreateNote(c *gin.Context, input dto.CreateNoteInput, userID uuid.UUID) (*ent.Note, error)
 	UpdateNote(c *gin.Context, input dto.UpdateNoteInput, noteID uuid.UUID, userID uuid.UUID) (*ent.Note, error)
-	DeleteNote(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) string
+	DeleteNote(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) (string, error)
 }
 
 type noteService struct {
@@ -27,11 +27,11 @@ func NewNoteService(noteRepository repository.NoteRepository) NoteService {
 	}
 }
 
-func (service *noteService) FindNotes(c *gin.Context, userID uuid.UUID) []*ent.Note {
-	return service.noteRepository.FindNotes(c, userID)
+func (service *noteService) FindNotes(c *gin.Context, userID uuid.UUID, subject string) ([]*ent.Note, error) {
+	return service.noteRepository.FindNotes(c, userID, subject)
 }
 
-func (service *noteService) FindNoteByID(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) *ent.Note {
+func (service *noteService) FindNoteByID(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) (*ent.Note, error) {
 	return service.noteRepository.FindNoteByID(c, noteID, userID)
 }
 
@@ -43,6 +43,6 @@ func (service *noteService) UpdateNote(c *gin.Context, input dto.UpdateNoteInput
 	return service.noteRepository.UpdateNote(c, input, noteID, userID)
 }
 
-func (service *noteService) DeleteNote(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) string {
+func (service *noteService) DeleteNote(c *gin.Context, noteID uuid.UUID, userID uuid.UUID) (string, error) {
 	return service.noteRepository.DeleteNote(c, noteID, userID)
 }

@@ -3,7 +3,7 @@ package dto
 type CreateNoteInput struct {
 	Title   string `json:"title" binding:"required"`
 	Content string `json:"content" binding:"required"`
-	Subject string `json:"subject"`
+	Subject string `json:"subject" binding:"required"`
 }
 
 type UpdateNoteInput struct {
