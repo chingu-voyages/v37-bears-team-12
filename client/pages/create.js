@@ -9,11 +9,13 @@ export default function create() {
     const theme = 'snow';
     const [title, setTitle] = useState('');
     const [subject, setSubject] = useState('DEFAULT');
-    const [user_id, setUser_id] = useState();
+    // const [user_id, setUser_id] = useState();
 
     const { quill, quillRef } = useQuill({ theme });
 
     const [loggedIn, setLoggedIn] = useState(false);
+
+    let user_id;
 
     useEffect(() => {
         let accessToken = localStorage.getItem("supabase.auth.token");
@@ -21,8 +23,8 @@ export default function create() {
             window.location.assign("/");
         } else {
             setLoggedIn(true);
-            accessToken = JSON.parse(accessToken);
-            setUser_id(accessToken.currentSession.user.id);
+            let accessToken = JSON.parse(localStorage.getItem('supabase.auth.token'));
+            user_id = accessToken.currentSession['user'].id;
         }
     }, []);
 
@@ -38,16 +40,18 @@ export default function create() {
             user_id: user_id
         };
         
+        console.log(data);
+
         // Post data to database
         fetch(
-            // `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`
-                `https://chingu-notes-app.herokuapp.com/notes`
+            `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`
+                // `https://chingu-notes-app.herokuapp.com/notes`
         , {
             method: "POST",
             headers: {
                 "Content-type": "application/json",
-                // apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-                Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+                apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                // Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
             },
             body: JSON.stringify(data),
         })
