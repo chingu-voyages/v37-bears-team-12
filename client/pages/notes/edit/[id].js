@@ -2,58 +2,41 @@ import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
 // import 'quill/dist/quill.bubble.css'; // Add css for bubble theme
 import NavBar from "../../../components/NavBar";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export default function edit() {
+export default function edit({ data, id }) {
     const theme = "snow";
-    const [title, setTitle] = useState("");
-    const [subject, setSubject] = useState("DEFAULT");
+
+    const [note, setNote] = useState(data[0]);
+    const [title, setTitle] = useState(data[0].title);
+    const [subject, setSubject] = useState(data[0].subject);
+    const [user_id, setUser_id] = useState(data[0].user_id);
+    const [created_at, setCreated_at] = useState(data[0].created_at);
+
     const { quill, quillRef } = useQuill({ theme });
 
-    const router = useRouter();
-    const { id } = router.query;
-    const [note, setNote] = useState();
-
-    // Get note from the database
-    useEffect(() => {
-        const fetchFromAPI = async () => {
-            const res = await fetch(
-                `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?id=eq.${id}&select=*`,
-                {
-                    method: "GET",
-                    headers: {
-                        apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-                    },
-                }
-            );
-            const data = await res.json();
-            console.log("data: ", data);
-            setNote(data[0]);
-        };
-
-        if (id) {
-            fetchFromAPI();
-        }
-    }, [id]);
-
-    // quill.setContents([
-    //     { insert: 'Hello ' },
-    //   ]);
-
+    console.log("data[0].content:", data[0].content);
     useEffect(() => {
         if (quill) {
-            quill.on("text-change", (delta, oldDelta, source) => {
-                console.log("Text change!");
-                // console.log(quill.getText()); // Get text only
-                // console.log(quill.getContents()); // Get delta contents
-                // Get innerHTML using quill
-                // content = quill.root.innerHTML;
-                // content = quill.getContents();
-                // console.log(quillRef.current.firstChild.innerHTML); // Get innerHTML using quillRef
+            quill.setContents({
+                ops: [{ insert: data[0].content }],
             });
         }
-    }, [quill]);
+    });
+
+    //    useEffect(() => {
+    //         if (quill) {
+    //             quill.on("text-change", (delta, oldDelta, source) => {
+    //                 // console.log("Text change!");
+    //                 // console.log(quill.getText()); // Get text only
+    //                 // console.log(quill.getContents()); // Get delta contents
+    //                 // Get innerHTML using quill
+    //                 // content = quill.root.innerHTML;
+    //                 content = quill.getContents();
+    //                 // console.log(quillRef.current.firstChild.innerHTML); // Get innerHTML using quillRef
+    //             });
+    //         }
+    //     }, [quill]);
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -61,11 +44,16 @@ export default function edit() {
         let content = quill.getText();
 
         let data = {
+            id: id,
+            user_id: user_id,
             title: title,
-            subject: subject,
             content: content,
-            user_id: 1,
+            subject: subject,
+            created_at: created_at,
+            updated_at: new Date(),
         };
+
+        console.log("data", data);
 
         // Submit updated data to database
         fetch(
@@ -102,7 +90,7 @@ export default function edit() {
                                 <input
                                     className="h-full w-full placeholder-shown:text-2xl focus:outline-none"
                                     type="text"
-                                    value={note.title}
+                                    value={title}
                                     onChange={(e) => setTitle(e.target.value)}
                                     placeholder={note.title}
                                 />
@@ -111,7 +99,7 @@ export default function edit() {
                                 <select
                                     className="h-full w-full text-gray-500 focus:outline-none"
                                     id="subject"
-                                    value={note.subject || ''}
+                                    value={subject || ""}
                                     onChange={(e) => setSubject(e.target.value)}
                                 >
                                     <option value="DEFAULT" disabled hidden>
@@ -140,4 +128,23 @@ export default function edit() {
             </main>
         </div>
     );
+}
+
+export async function getServerSideProps(context) {
+    // Fetch data from external API
+    const { id } = context.query;
+
+    const res = await fetch(
+        `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?id=eq.${id}&select=*`,
+        {
+            method: "GET",
+            headers: {
+                apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+            },
+        }
+    );
+    const data = await res.json();
+
+    // Pass data to the page via props
+    return { props: { data, id } };
 }

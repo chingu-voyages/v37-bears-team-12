@@ -1,5 +1,5 @@
 import GreetingDate from "../components/greetingDate";
-import NotesCard from "../components/notesCard";
+import NoteCard from "../components/noteCard";
 import NavBar from "../components/NavBar";
 import { useEffect, useState } from "react";
 
@@ -63,7 +63,7 @@ export default function notes() {
                 
                 <section className="bg-white w-11/12 opacity-75 rounded-3xl mx-auto mt-10 p-3">
                     {notes.map((note) => (
-                        <NotesCard
+                        <NoteCard
                             key={note.id}
                             id={note.id}
                             created_at={note.created_at}
