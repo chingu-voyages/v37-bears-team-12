@@ -7,23 +7,24 @@ import { useEffect, useState } from "react";
 export default function create() {
     
     const theme = 'snow';
-    const [title, setTitle] = useState('')
-    const [subject, setSubject] = useState('DEFAULT')
+    const [title, setTitle] = useState('');
+    const [subject, setSubject] = useState('DEFAULT');
+    const [user_id, setUser_id] = useState();
+
     const { quill, quillRef } = useQuill({ theme });
 
-    // useEffect(() => {
-    //     if (quill) {
-    //         quill.on("text-change", (delta, oldDelta, source) => {
-    //             // console.log('Text change!');
-    //             // console.log(quill.getText()); // Get text only
-    //             // console.log(quill.getContents()); // Get delta contents
-    //             // Get innerHTML using quill
-    //             // content = quill.root.innerHTML;
-    //             content = quill.getContents();
-    //             // console.log(quillRef.current.firstChild.innerHTML); // Get innerHTML using quillRef
-    //         });
-    //     }
-    // }, [quill]);
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    useEffect(() => {
+        let accessToken = localStorage.getItem("supabase.auth.token");
+        if (accessToken === null) {
+            window.location.assign("/");
+        } else {
+            setLoggedIn(true);
+            accessToken = JSON.parse(accessToken);
+            setUser_id(accessToken.currentSession.user.id);
+        }
+    }, []);
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -34,18 +35,19 @@ export default function create() {
             title: title,
             subject: subject,
             content: content,
+            user_id: user_id
         };
         
-        console.log(title)
-        console.log(subject)
-        console.log(content)
-
         // Post data to database
-        fetch(`https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`, {
+        fetch(
+            // `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`
+                `https://chingu-notes-app.herokuapp.com/notes`
+        , {
             method: "POST",
             headers: {
                 "Content-type": "application/json",
-                apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                // apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
             },
             body: JSON.stringify(data),
         })
@@ -55,6 +57,8 @@ export default function create() {
     }
 
     return (
+        <> 
+        {loggedIn && (
         <div className="flex flex-col md:flex-row">
             <NavBar />
             <main className="w-full h-screen">
@@ -85,5 +89,9 @@ export default function create() {
                 </form>
             </main>
         </div>
+        )
+    }
+    </>
+
     );
 }

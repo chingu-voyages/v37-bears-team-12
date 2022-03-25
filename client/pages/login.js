@@ -5,6 +5,8 @@ import { supabase } from "../utils/supabaseClient";
 import { useEffect, useState } from "react";
 import { redirect } from "next/dist/server/api-utils";
 import dashboard from "./dashboard";
+import Image from "next/image";
+import logo from '../public/images/CoffeeNotes-logos.jpeg'
 
 const fetcher = (url, token) =>
   fetch(url, {
@@ -122,7 +124,9 @@ const Index = () => {
     <div className="h-screen bg-cover bg-[url('/images/coffee-notebook.jpg')] ">
         <div className="flex flex-col h-screen">
             <header className="flex justify-between items-center">
-                <span className="px-5 text-xl">LOGO</span>
+                <div className="h-14 w-14 rounded-full ml-3 mt-3">
+                    <Image src={logo} alt='logo' className="h-full w-full rounded-full"/>
+                </div>
                 <nav className="text-sm md:text-xl py-4">
                     <ul className="flex">
                         <Link href="/">

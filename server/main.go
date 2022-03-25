@@ -23,8 +23,9 @@ var (
 func main() {
 
 	r := gin.Default()
-
 	r.Use(middleware.CORSMiddleware())
+
+
 	// Connect to database
 	database.ConnectDatabase()
 

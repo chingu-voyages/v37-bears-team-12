@@ -1,10 +1,23 @@
 import GreetingDate from "../components/greetingDate";
-import NotesCard from "../components/notesCard";
+import NoteCard from "../components/noteCard";
 import NavBar from "../components/NavBar";
 import { useEffect, useState } from "react";
 
 export default function notes() {
     
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    useEffect(() => {
+        let accessToken = localStorage.getItem("supabase.auth.token");
+        if (accessToken === null) {
+            window.location.assign("/");
+        } else {
+            setLoggedIn(true);
+            accessToken = JSON.parse(accessToken);
+            let user_id = accessToken.currentSession.user.id;
+        }
+    }, []);
+
     const [notes, setNotes] = useState([]);
     const [subject, setSubject] = useState('*');
 
@@ -15,9 +28,9 @@ export default function notes() {
     useEffect(async () => {
         let url;
         if (subject === '*') {
-            url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`
+            url = `https://chingu-notes-app.herokuapp.com/notes`
         } else {
-            url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?subject=eq.${subject}&select=*`
+            url = `https://chingu-notes-app.herokuapp.com/notes?subject=${subject}/`
         }
         
         const res = await fetch(
@@ -25,15 +38,18 @@ export default function notes() {
             {
                 method: "GET",
                 headers: {
-                    apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                    Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
                 },
             }
         );
-        const data = await res.json();        
+        const response = await res.json();      
+        const data = response.data;
         setNotes(data);
     },[subject]);
 
     return (
+        <>
+        {loggedIn && (
         <div className="flex flex-col md:flex-row">
             <NavBar />
 
@@ -62,8 +78,8 @@ export default function notes() {
                 </section>
                 
                 <section className="bg-white w-11/12 opacity-75 rounded-3xl mx-auto mt-10 p-3">
-                    {notes.map((note) => (
-                        <NotesCard
+                    {notes && notes.map((note) => (
+                        <NoteCard
                             key={note.id}
                             id={note.id}
                             created_at={note.created_at}
@@ -74,6 +90,8 @@ export default function notes() {
                     ))}
                 </section>
             </main>
-        </div>
+        </div>)
+        }
+        </>
     );
 }
