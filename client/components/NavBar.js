@@ -32,7 +32,6 @@ export default function NavBar() {
                     </div>
                     <h2 className="text-3xl mb-4 ml-4 mt-6 whitespace-normal">Coffee Notes</h2>
                 </div>
-                <h3 className="mb-4 text-2xl ml-4 whitespace-normal">User Name</h3>
                 <ul className="flex flex-col">
                     <Link href="/dashboard">
                         <a className="underline pl-4 mb-3 text-lg h-11 rounded-lg flex items-center hover:bg-black hover:opacity-25"><HomeIcon className="h-6 w-6 mr-2"/> Dashboard</a>
