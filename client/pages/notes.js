@@ -28,9 +28,9 @@ export default function notes() {
     useEffect(async () => {
         let url;
         if (subject === '*') {
-            url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`
+            url = `https://chingu-notes-app.herokuapp.com/notes`
         } else {
-            url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?subject=eq.${subject}&select=*`
+            url = `https://chingu-notes-app.herokuapp.com/notes?subject=${subject}/`
         }
         
         const res = await fetch(
@@ -38,11 +38,12 @@ export default function notes() {
             {
                 method: "GET",
                 headers: {
-                    apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                    Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
                 },
             }
         );
-        const data = await res.json();        
+        const response = await res.json();      
+        const data = response.data;
         setNotes(data);
     },[subject]);
 
@@ -77,7 +78,7 @@ export default function notes() {
                 </section>
                 
                 <section className="bg-white w-11/12 opacity-75 rounded-3xl mx-auto mt-10 p-3">
-                    {notes.map((note) => (
+                    {notes && notes.map((note) => (
                         <NoteCard
                             key={note.id}
                             id={note.id}
