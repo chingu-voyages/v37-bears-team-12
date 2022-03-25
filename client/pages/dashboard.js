@@ -19,33 +19,35 @@ export default function dashboard({ data }) {
     }, []);
 
     useEffect(async () => {
-        let url = `https://chingu-notes-app.herokuapp.com/notes`
+        // let url = `https://chingu-notes-app.herokuapp.com/notes`
+        let url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`
         const res = await fetch(
             url,
             {
                 method: "GET",
                 headers: {
-                    Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+                    // Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+                    apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
                 },
             }
         );
         const response = await res.json();      
-        const data = response.data;
-        console.log(data)
-        setNotes(data);
+        // const data = response.data;
+        console.log(response)
+        setNotes(response);
     },[]);
 
     // const notes = data;
-    // let sortedNotes = [];
+    let sortedNotes = [];
 
     // if more than one note, sort notes by created date with newest notes at the start of the array
-    // if (notes.length > 1) {
-    //     sortedNotes = notes.sort(
-    //         (a, b) => new Date(b.created_at) - new Date(a.created_at)
-    //     );
-    // } else {
-    //     sortedNotes = notes;
-    // }
+    if (notes.length > 1) {
+        sortedNotes = notes.sort(
+            (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+    } else {
+        sortedNotes = notes;
+    }
 
     // create an array with only four notes to display on the dashboard
     let recentNotes = [];

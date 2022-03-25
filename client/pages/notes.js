@@ -28,9 +28,11 @@ export default function notes() {
     useEffect(async () => {
         let url;
         if (subject === '*') {
-            url = `https://chingu-notes-app.herokuapp.com/notes`
+            // url = `https://chingu-notes-app.herokuapp.com/notes`
+            url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`
         } else {
-            url = `https://chingu-notes-app.herokuapp.com/notes?subject=${subject}/`
+            // url = `https://chingu-notes-app.herokuapp.com/notes?subject=${subject}/`
+            url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?subject=eq.${subject}`
         }
         
         const res = await fetch(
@@ -38,13 +40,15 @@ export default function notes() {
             {
                 method: "GET",
                 headers: {
-                    Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+                    // Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+                    apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
                 },
             }
         );
         const response = await res.json();      
-        const data = response.data;
-        setNotes(data);
+        // const data = response.data; // If using Heroku use this line
+        // console.log(response)
+        setNotes(response);
     },[subject]);
 
     return (
