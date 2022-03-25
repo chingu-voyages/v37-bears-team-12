@@ -7,12 +7,13 @@ import { useEffect, useState } from "react";
 export default function create() {
     
     const theme = 'snow';
-    const [title, setTitle] = useState('')
-    const [subject, setSubject] = useState('DEFAULT')
+    const [title, setTitle] = useState('');
+    const [subject, setSubject] = useState('DEFAULT');
+    const [user_id, setUser_id] = useState();
+
     const { quill, quillRef } = useQuill({ theme });
 
     const [loggedIn, setLoggedIn] = useState(false);
-    let user_id;
 
     useEffect(() => {
         let accessToken = localStorage.getItem("supabase.auth.token");
@@ -21,23 +22,9 @@ export default function create() {
         } else {
             setLoggedIn(true);
             accessToken = JSON.parse(accessToken);
-            user_id = accessToken.currentSession.user.id;
+            setUser_id(accessToken.currentSession.user.id);
         }
     }, []);
-
-    // useEffect(() => {
-    //     if (quill) {
-    //         quill.on("text-change", (delta, oldDelta, source) => {
-    //             // console.log('Text change!');
-    //             // console.log(quill.getText()); // Get text only
-    //             // console.log(quill.getContents()); // Get delta contents
-    //             // Get innerHTML using quill
-    //             // content = quill.root.innerHTML;
-    //             content = quill.getContents();
-    //             // console.log(quillRef.current.firstChild.innerHTML); // Get innerHTML using quillRef
-    //         });
-    //     }
-    // }, [quill]);
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -52,11 +39,15 @@ export default function create() {
         };
         
         // Post data to database
-        fetch(`https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`, {
+        fetch(
+            // `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`
+                `https://chingu-notes-app.herokuapp.com/notes`
+        , {
             method: "POST",
             headers: {
                 "Content-type": "application/json",
-                apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                // apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
             },
             body: JSON.stringify(data),
         })
