@@ -1,24 +1,41 @@
 package main
 
 import (
-	"github.com/rahmanfadhil/gin-bookstore/controllers"
-	"github.com/rahmanfadhil/gin-bookstore/models"
+	"notes-app/controller"
+	"notes-app/database"
+	"notes-app/ent"
+	"notes-app/middleware"
+	"notes-app/repository"
+	"notes-app/service"
 
 	"github.com/gin-gonic/gin"
 )
 
+var (
+	db         *ent.Client        = database.ConnectDatabase()
+	jwtService service.JWTService = service.NewJWTService()
+
+	noteController controller.NoteController = controller.NewNoteController(noteService, jwtService)
+	noteService    service.NoteService       = service.NewNoteService(noteRepository)
+	noteRepository repository.NoteRepository = repository.NewNoteRepository(db)
+)
+
 func main() {
+
 	r := gin.Default()
+	r.Use(middleware.CORSMiddleware())
 
 	// Connect to database
-	models.ConnectDatabase()
+	database.ConnectDatabase()
 
-	// Routes
-	r.GET("/notes", controllers.FindNotes)
-	r.GET("/notes/:id", controllers.FindNote)
-	r.POST("/notes", controllers.CreateNote)
-	r.PATCH("/notes/:id", controllers.UpdateNote)
-	r.DELETE("/notes/:id", controllers.DeleteNote)
+	noteRoutes := r.Group("/notes/", middleware.AuthorizeJWT(jwtService))
+	{
+		noteRoutes.GET("/", noteController.FindNotes)
+		noteRoutes.GET("/:id", noteController.FindNoteByID)
+		noteRoutes.POST("/", noteController.CreateNote)
+		noteRoutes.PUT("/:id", noteController.UpdateNote)
+		noteRoutes.DELETE("/:id", noteController.DeleteNote)
+	}
 
 	// Run the server
 	r.Run()
