@@ -33,14 +33,14 @@ func NewNoteRepository(dbConn *ent.Client) NoteRepository {
 	}
 }
 
-func isValidSubject(subject string) bool {
-	switch subject {
-	case "biology", "calculus", "history", "physics", "english":
-		return true
-	}
+// func isValidSubject(subject string) bool {
+// 	switch subject {
+// 	case "biology", "calculus", "history", "physics", "english":
+// 		return true
+// 	}
 
-	return false
-}
+// 	return false
+// }
 
 func (db *noteConnection) FindNotes(c *gin.Context, userID uuid.UUID, subject string) ([]*ent.Note, error) {
 	fmt.Println("Getting note")
@@ -54,7 +54,7 @@ func (db *noteConnection) FindNotes(c *gin.Context, userID uuid.UUID, subject st
 		}
 
 		return notes, nil
-	} else if isValidSubject(subject) {
+	} else {
 		notes, err := db.connection.Note.Query().Where(note.And(
 			note.UserID(userID),
 			note.Subject(subject),
@@ -64,8 +64,6 @@ func (db *noteConnection) FindNotes(c *gin.Context, userID uuid.UUID, subject st
 			log.Fatalf("Error occurred")
 		}
 		return notes, nil
-	} else {
-		return nil, fmt.Errorf("Invalid subject")
 	}
 
 }
@@ -90,20 +88,16 @@ func (db *noteConnection) FindNoteByID(c *gin.Context, noteID uuid.UUID, userID 
 
 func (db *noteConnection) CreateNote(c *gin.Context, input dto.CreateNoteInput, userID uuid.UUID) (*ent.Note, error) {
 
-	if isValidSubject(input.Subject) {
+	note, err := db.connection.Note.Create().
+		SetID(uuid.New()).
+		SetUserID(userID).
+		SetTitle(input.Title).
+		SetContent(input.Content).
+		SetSubject(input.Subject).
+		Save(c)
 
-		note, err := db.connection.Note.Create().
-			SetID(uuid.New()).
-			SetUserID(userID).
-			SetTitle(input.Title).
-			SetContent(input.Content).
-			SetSubject(input.Subject).
-			Save(c)
+	return note, err
 
-		return note, err
-	} else {
-		return nil, fmt.Errorf("Invalid subject")
-	}
 }
 
 func (db *noteConnection) UpdateNote(c *gin.Context, input dto.UpdateNoteInput, noteID uuid.UUID, userID uuid.UUID) (*ent.Note, error) {
@@ -112,18 +106,15 @@ func (db *noteConnection) UpdateNote(c *gin.Context, input dto.UpdateNoteInput, 
 	foundNote, _ := db.connection.Note.Query().Where(note.ID(noteID)).First(context.Background())
 
 	if foundNote.UserID == userID {
-		if isValidSubject(input.Subject) {
-			note, err := db.connection.Note.UpdateOneID(noteID).
-				SetTitle(input.Title).
-				SetContent(input.Content).
-				SetSubject(input.Subject).
-				SetUpdatedAt(time.Now()).
-				Save(context.Background())
 
-			return note, err
-		} else {
-			return nil, fmt.Errorf("Invalid subject")
-		}
+		note, err := db.connection.Note.UpdateOneID(noteID).
+			SetTitle(input.Title).
+			SetContent(input.Content).
+			SetSubject(input.Subject).
+			SetUpdatedAt(time.Now()).
+			Save(context.Background())
+
+		return note, err
 
 	} else {
 		return foundNote, fmt.Errorf("You are not authorized to edit this note")
