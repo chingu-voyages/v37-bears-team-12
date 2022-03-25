@@ -65,7 +65,11 @@ func (controller *noteController) FindNoteByID(c *gin.Context) {
 
 	note, _ := controller.noteService.FindNoteByID(c, noteID, userID)
 
-	c.JSON(http.StatusOK, gin.H{"data": note})
+	if note == nil {
+		c.JSON(http.StatusOK, gin.H{"data": "Note not found"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"data": note})
+	}
 }
 
 func (controller *noteController) CreateNote(c *gin.Context) {

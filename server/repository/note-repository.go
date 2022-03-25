@@ -83,7 +83,7 @@ func (db *noteConnection) FindNoteByID(c *gin.Context, noteID uuid.UUID, userID 
 		if note.UserID == userID {
 			return note, nil
 		} else {
-			return nil, fmt.Errorf("You are not authorized to read this note")
+			return nil, nil
 		}
 	}
 }
@@ -112,14 +112,19 @@ func (db *noteConnection) UpdateNote(c *gin.Context, input dto.UpdateNoteInput, 
 	foundNote, _ := db.connection.Note.Query().Where(note.ID(noteID)).First(context.Background())
 
 	if foundNote.UserID == userID {
-		note, err := db.connection.Note.UpdateOneID(noteID).
-			SetTitle(input.Title).
-			SetContent(input.Content).
-			SetSubject(input.Subject).
-			SetUpdatedAt(time.Now()).
-			Save(context.Background())
+		if isValidSubject(input.Subject) {
+			note, err := db.connection.Note.UpdateOneID(noteID).
+				SetTitle(input.Title).
+				SetContent(input.Content).
+				SetSubject(input.Subject).
+				SetUpdatedAt(time.Now()).
+				Save(context.Background())
 
-		return note, err
+			return note, err
+		} else {
+			return nil, fmt.Errorf("Invalid subject")
+		}
+
 	} else {
 		return foundNote, fmt.Errorf("You are not authorized to edit this note")
 	}
