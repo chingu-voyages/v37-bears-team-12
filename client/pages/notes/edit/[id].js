@@ -39,20 +39,6 @@ export default function edit({ data, id }) {
         }
     });
 
-    //    useEffect(() => {
-    //         if (quill) {
-    //             quill.on("text-change", (delta, oldDelta, source) => {
-    //                 // console.log("Text change!");
-    //                 // console.log(quill.getText()); // Get text only
-    //                 // console.log(quill.getContents()); // Get delta contents
-    //                 // Get innerHTML using quill
-    //                 // content = quill.root.innerHTML;
-    //                 content = quill.getContents();
-    //                 // console.log(quillRef.current.firstChild.innerHTML); // Get innerHTML using quillRef
-    //             });
-    //         }
-    //     }, [quill]);
-
     function handleSubmit(e) {
         e.preventDefault();
 
@@ -72,12 +58,14 @@ export default function edit({ data, id }) {
 
         // Submit updated data to database
         fetch(
-            `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?id=eq.${id}`,
+            // `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?id=eq.${id}`,
+            `https://chingu-notes-app.herokuapp.com/notes/${id}`,
             {
                 method: "PUT",
                 headers: {
                     "Content-type": "application/json",
-                    apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                    // apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                    Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
                 },
                 body: JSON.stringify(data),
             }
