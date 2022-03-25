@@ -17,11 +17,13 @@ export default function NoteCard({ id, title, subject, created_at, content }) {
         if (input) {            
             const deleteNote = async () => {
                 const res = await fetch(
-                    `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?id=eq.${id}`,
+                    // `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?id=eq.${id}`,
+                    `https://chingu-notes-app.herokuapp.com/notes/${id}`,
                     {
                         method: "DELETE",
                         headers: {
-                            apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                            // apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                            Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
                         },
                     }
                 );
