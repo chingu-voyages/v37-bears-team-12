@@ -35,11 +35,7 @@ func NewJWTService() JWTService {
 }
 
 func getSecretKey() string {
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	godotenv.Load(".env")
 
 	secretKey := os.Getenv("JWT_SECRET")
 	// if secretKey != "" {
