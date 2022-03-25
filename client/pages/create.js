@@ -11,6 +11,20 @@ export default function create() {
     const [subject, setSubject] = useState('DEFAULT')
     const { quill, quillRef } = useQuill({ theme });
 
+    const [loggedIn, setLoggedIn] = useState(false);
+    let user_id;
+
+    useEffect(() => {
+        let accessToken = localStorage.getItem("supabase.auth.token");
+        if (accessToken === null) {
+            window.location.assign("/");
+        } else {
+            setLoggedIn(true);
+            accessToken = JSON.parse(accessToken);
+            user_id = accessToken.currentSession.user.id;
+        }
+    }, []);
+
     // useEffect(() => {
     //     if (quill) {
     //         quill.on("text-change", (delta, oldDelta, source) => {
@@ -34,12 +48,9 @@ export default function create() {
             title: title,
             subject: subject,
             content: content,
+            user_id: user_id
         };
         
-        console.log(title)
-        console.log(subject)
-        console.log(content)
-
         // Post data to database
         fetch(`https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`, {
             method: "POST",
@@ -55,6 +66,8 @@ export default function create() {
     }
 
     return (
+        <> 
+        {loggedIn && (
         <div className="flex flex-col md:flex-row">
             <NavBar />
             <main className="w-full h-screen">
@@ -85,5 +98,9 @@ export default function create() {
                 </form>
             </main>
         </div>
+        )
+    }
+    </>
+
     );
 }

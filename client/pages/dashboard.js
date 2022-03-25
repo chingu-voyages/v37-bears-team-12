@@ -1,19 +1,34 @@
 import NoteCard from "../components/noteCard";
 import GreetingDate from "../components/greetingDate";
 import NavBar from "../components/NavBar";
+import { useEffect, useState } from "react";
 
-export default function dashboard({data}) {
-    
+export default function dashboard({ data }) {
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    useEffect(() => {
+        let accessToken = localStorage.getItem("supabase.auth.token");
+        if (accessToken === null) {
+            window.location.assign("/");
+        } else {
+            setLoggedIn(true);
+            accessToken = JSON.parse(accessToken);
+            let user_id = accessToken.currentSession.user.id;
+        }
+    }, []);
+
     const notes = data;
     let sortedNotes = [];
 
     // if more than one note, sort notes by created date with newest notes at the start of the array
     if (notes.length > 1) {
-        sortedNotes = notes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        sortedNotes = notes.sort(
+            (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
     } else {
         sortedNotes = notes;
     }
-    
+
     // create an array with only four notes to display on the dashboard
     let recentNotes = [];
     if (sortedNotes.length > 4) {
@@ -25,37 +40,42 @@ export default function dashboard({data}) {
     }
 
     return (
-        <div className="flex flex-col md:flex-row">
-            <NavBar />
+        <>
+            {loggedIn && (
+                <div className="flex flex-col md:flex-row">
+                    <NavBar />
 
-            <main className="md:w-full bg-cover bg-[url('/images/coffee-notebook.jpg')] min-h-screen">
-                <GreetingDate />
+                    <main className="md:w-full bg-cover bg-[url('/images/coffee-notebook.jpg')] min-h-screen">
+                        <GreetingDate />
 
-                <h1 className="w-11/12 mx-auto text-center text-black bg-white opacity-75 rounded-3xl text-2xl p-2">
-                    Recent Notes
-                </h1>
+                        <h1 className="w-11/12 mx-auto text-center text-black bg-white opacity-75 rounded-3xl text-2xl p-2">
+                            Recent Notes
+                        </h1>
 
-                <section className="bg-white w-11/12 opacity-75 rounded-3xl mx-auto my-8">
-                    <div className="flex flex-wrap justify-around">
-                    {recentNotes.map(note => (
-                        <NoteCard
-                            key={note.id}
-                            id={note.id}
-                            created_at={note.created_at}
-                            title={note.title}
-                            subject={note.subject}
-                            content={note.content}
-                        />
-                    ))}
-                    </div>
-                </section>
-            </main>
-        </div>
+                        <section className="bg-white w-11/12 opacity-75 rounded-3xl mx-auto my-8">
+                            <div className="flex flex-wrap justify-around">
+                                {recentNotes.map((note) => (
+                                    <NoteCard
+                                        key={note.id}
+                                        id={note.id}
+                                        created_at={note.created_at}
+                                        title={note.title}
+                                        subject={note.subject}
+                                        content={note.content}
+                                    />
+                                ))}
+                            </div>
+                        </section>
+                    </main>
+                </div>
+            )}
+        </>
     );
 }
 
 export async function getServerSideProps(context) {
     // Fetch data from external API
+
     const res = await fetch(
         `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`,
         {

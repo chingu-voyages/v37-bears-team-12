@@ -10,6 +10,20 @@ export default function Note() {
     const { id } = router.query;
     const [note, setNote] = useState();
 
+    const [loggedIn, setLoggedIn] = useState(false);
+    let user_id;
+
+    useEffect(() => {
+        let accessToken = localStorage.getItem("supabase.auth.token");
+        if (accessToken === null) {
+            window.location.assign("/");
+        } else {
+            setLoggedIn(true);
+            accessToken = JSON.parse(accessToken);
+            user_id = accessToken.currentSession.user.id;
+        }
+    }, []);
+
     useEffect(() => {
         const fetchFromAPI = async () => {
             const res = await fetch(
@@ -36,7 +50,7 @@ export default function Note() {
 
     return (
         <>
-            {note && (
+            {loggedIn && note && (
                 <div>
                     <div className="flex flex-col md:flex-row">
                         <NavBar />

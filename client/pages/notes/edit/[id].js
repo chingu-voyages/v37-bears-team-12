@@ -10,12 +10,27 @@ export default function edit({ data, id }) {
     const [note, setNote] = useState(data[0]);
     const [title, setTitle] = useState(data[0].title);
     const [subject, setSubject] = useState(data[0].subject);
-    const [user_id, setUser_id] = useState(data[0].user_id);
+    // const [user_id, setUser_id] = useState(data[0].user_id); // Using token for user_id
     const [created_at, setCreated_at] = useState(data[0].created_at);
 
     const { quill, quillRef } = useQuill({ theme });
 
+    const [loggedIn, setLoggedIn] = useState(false);
+    let user_id;
+
+    useEffect(() => {
+        let accessToken = localStorage.getItem("supabase.auth.token");
+        if (accessToken === null) {
+            window.location.assign("/");
+        } else {
+            setLoggedIn(true);
+            accessToken = JSON.parse(accessToken);
+            user_id = accessToken.currentSession.user.id;
+        }
+    }, []);
+
     console.log("data[0].content:", data[0].content);
+
     useEffect(() => {
         if (quill) {
             quill.setContents({
@@ -73,60 +88,82 @@ export default function edit({ data, id }) {
     }
 
     return (
-        <div className="flex flex-col md:flex-row">
-            <NavBar />
-            <main className="w-full h-screen">
-                {!note ? (
-                    <div>
-                        <h1>Note is loading</h1>
-                    </div>
-                ) : (
-                    <form
-                        onSubmit={handleSubmit}
-                        className="h-full w-full relative"
-                    >
-                        <div className="h-1/6 text-2xl">
-                            <div className="h-1/2 flex items-center ">
-                                <input
-                                    className="h-full w-full placeholder-shown:text-2xl focus:outline-none"
-                                    type="text"
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                    placeholder={note.title}
-                                />
+        <>
+            {loggedIn && (
+                <div className="flex flex-col md:flex-row">
+                    <NavBar />
+                    <main className="w-full h-screen">
+                        {!note ? (
+                            <div>
+                                <h1>Note is loading</h1>
                             </div>
-                            <div className="h-1/2 flex items-center">
-                                <select
-                                    className="h-full w-full text-gray-500 focus:outline-none"
-                                    id="subject"
-                                    value={subject || ""}
-                                    onChange={(e) => setSubject(e.target.value)}
+                        ) : (
+                            <form
+                                onSubmit={handleSubmit}
+                                className="h-full w-full relative"
+                            >
+                                <div className="h-1/6 text-2xl">
+                                    <div className="h-1/2 flex items-center ">
+                                        <input
+                                            className="h-full w-full placeholder-shown:text-2xl focus:outline-none"
+                                            type="text"
+                                            value={title}
+                                            onChange={(e) =>
+                                                setTitle(e.target.value)
+                                            }
+                                            placeholder={note.title}
+                                        />
+                                    </div>
+                                    <div className="h-1/2 flex items-center">
+                                        <select
+                                            className="h-full w-full text-gray-500 focus:outline-none"
+                                            id="subject"
+                                            value={subject || ""}
+                                            onChange={(e) =>
+                                                setSubject(e.target.value)
+                                            }
+                                        >
+                                            <option
+                                                value="DEFAULT"
+                                                disabled
+                                                hidden
+                                            >
+                                                Choose a subject
+                                            </option>
+                                            <option value="Biology">
+                                                Biology
+                                            </option>
+                                            <option value="Calculus">
+                                                Calculus
+                                            </option>
+                                            <option value="History">
+                                                History
+                                            </option>
+                                            <option value="Physics">
+                                                Physics
+                                            </option>
+                                            <option value="English">
+                                                English
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="h-[79%] w-full relative">
+                                    <div ref={quillRef} className="h-full" />
+                                </div>
+                                <button
+                                    type="submit"
+                                    value="submit"
+                                    className="absolute bottom-0 right-0 mb-24 mr-24 px-8 py-6 bg-green-500 hover:bg-green-700 text-lg font-bold shadow shadow-black rounded-full "
                                 >
-                                    <option value="DEFAULT" disabled hidden>
-                                        Choose a subject
-                                    </option>
-                                    <option value="Biology">Biology</option>
-                                    <option value="Calculus">Calculus</option>
-                                    <option value="History">History</option>
-                                    <option value="Physics">Physics</option>
-                                    <option value="English">English</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="h-[79%] w-full relative">
-                            <div ref={quillRef} className="h-full" />
-                        </div>
-                        <button
-                            type="submit"
-                            value="submit"
-                            className="absolute bottom-0 right-0 mb-24 mr-24 px-8 py-6 bg-green-500 hover:bg-green-700 text-lg font-bold shadow shadow-black rounded-full "
-                        >
-                            Submit
-                        </button>
-                    </form>
-                )}
-            </main>
-        </div>
+                                    Submit
+                                </button>
+                            </form>
+                        )}
+                    </main>
+                </div>
+            )}
+        </>
     );
 }
 
