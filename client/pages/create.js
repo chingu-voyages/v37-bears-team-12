@@ -39,7 +39,7 @@ export default function create() {
             title: title,
             subject: subject,
             content: content,
-            user_id: user_id,
+            // user_id: user_id
         };
 
         console.log(data);
