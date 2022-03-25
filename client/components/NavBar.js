@@ -23,8 +23,9 @@ export default function NavBar() {
     }
 
     return (
+        
         <aside className="content-between md:w-72 bg-[#A49EA2] ">
-            <div className="text-white flex flex-col w-fit md:fixed">
+            <div className="text-white flex flex-col md:fixed">
                 <div className="flex flex-col items-center">
                     <div className="h-14 w-14 rounded-full ml-2 mt-2">
                         <Image src={logo} alt='logo' className="h-full w-full rounded-full"/>
@@ -43,7 +44,7 @@ export default function NavBar() {
                         <a className="underline pl-4 mb-3 text-lg h-11 rounded-lg flex items-center hover:bg-black hover:opacity-25"><DocumentAddIcon className="h-6 w-6 mr-2"/>Add a Note</a>
                     </Link>
                     
-                    <li className="pl-4 mb-3 text-lg h-11 flex items-center rounded-lg hover:bg-black hover:opacity-25" onClick={signOut}><LogoutIcon className="h-6 w-6 mr-2 mt-1"/>Sign Out</li>
+                    <li className="pl-4 mb-3 text-lg h-11 flex items-center rounded-lg hover:bg-black hover:opacity-25 cursor-pointer" onClick={signOut}><LogoutIcon className="h-6 w-6 mr-2 mt-1"/>Sign Out</li>
                 </ul>
             </div>
         </aside>
