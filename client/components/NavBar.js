@@ -5,17 +5,8 @@ import { useEffect } from "react";
 import { redirect } from "next/dist/server/api-utils";
 import logo from '../public/images/CoffeeNotes-logos.jpeg'
 import Image from "next/image";
-export default function NavBar() {
 
-   
-    // useEffect(() => { 
-    //     const accessToken = localStorage.getItem('supabase.auth.token')
-    //     if (accessToken === null) {
-    //       console.log("there is no token")
-    //     } else {
-    //         console.log(accessToken)
-    //     }
-    //   }, [])
+export default function NavBar() {
 
     const signOut = () => {
         supabase.auth.signOut()
@@ -23,7 +14,6 @@ export default function NavBar() {
     }
 
     return (
-        
         <aside className="content-between md:w-72 bg-[#A49EA2] ">
             <div className="text-white flex flex-col md:fixed">
                 <div className="flex flex-col items-center">

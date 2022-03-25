@@ -13,28 +13,24 @@ export default function notes() {
             window.location.assign("/");
         } else {
             setLoggedIn(true);
-            accessToken = JSON.parse(accessToken);
-            let user_id = accessToken.currentSession.user.id;
         }
     }, []);
 
-    const [notes, setNotes] = useState([]);
+    const [notes, setNotes] = useState();
     const [subject, setSubject] = useState('*');
 
     const handleSubjectChange = (e) => {
         setSubject(e.target.value);
     };
 
+    let url;
+
     useEffect(async () => {
-        let url;
         if (subject === '*') {
-            // url = `https://chingu-notes-app.herokuapp.com/notes`
-            url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`
+            url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?select=*`
         } else {
-            // url = `https://chingu-notes-app.herokuapp.com/notes?subject=${subject}/`
-            url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?subject=eq.${subject}`
+            url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?subject=eq.${subject}&select=*`
         }
-        
         const res = await fetch(
             url,
             {
@@ -47,7 +43,7 @@ export default function notes() {
         );
         const response = await res.json();      
         // const data = response.data; // If using Heroku use this line
-        // console.log(response)
+        console.log(response)
         setNotes(response);
     },[subject]);
 

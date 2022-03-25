@@ -17,8 +17,7 @@ export default function NoteCard({ id, title, subject, created_at, content }) {
         if (input) {            
             const deleteNote = async () => {
                 const res = await fetch(
-                    `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?id=eq.${id}`,
-                    // `https://chingu-notes-app.herokuapp.com/notes/${id}`,
+                    `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?id=eq.${id}`,
                     {
                         method: "DELETE",
                         headers: {
