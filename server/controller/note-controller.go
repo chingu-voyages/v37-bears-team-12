@@ -44,7 +44,7 @@ func (controller *noteController) FindNotes(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
 	}
 
-	notes := controller.noteService.FindNotes(c, userID, subject)
+	notes, _ := controller.noteService.FindNotes(c, userID, subject)
 
 	c.JSON(http.StatusOK, gin.H{"data": notes})
 }
@@ -63,7 +63,7 @@ func (controller *noteController) FindNoteByID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
 	}
 
-	note := controller.noteService.FindNoteByID(c, noteID, userID)
+	note, _ := controller.noteService.FindNoteByID(c, noteID, userID)
 
 	c.JSON(http.StatusOK, gin.H{"data": note})
 }
@@ -140,7 +140,7 @@ func (controller *noteController) DeleteNote(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid param"})
 	}
 
-	result := controller.noteService.DeleteNote(c, noteID, userID)
+	result, _ := controller.noteService.DeleteNote(c, noteID, userID)
 
 	if result == "<nil>" {
 		c.JSON(http.StatusOK, gin.H{"data": "Note deleted successfully!"})
