@@ -25,18 +25,14 @@ func main() {
 	r := gin.Default()
 	r.Use(middleware.CORSMiddleware())
 
-
 	// Connect to database
 	database.ConnectDatabase()
 
-	noteRoutes := r.Group("/notes/", middleware.AuthorizeJWT(jwtService))
-	{
-		noteRoutes.GET("/", noteController.FindNotes)
-		noteRoutes.GET("/:id", noteController.FindNoteByID)
-		noteRoutes.POST("/", noteController.CreateNote)
-		noteRoutes.PUT("/:id", noteController.UpdateNote)
-		noteRoutes.DELETE("/:id", noteController.DeleteNote)
-	}
+	r.GET("/notes", middleware.AuthorizeJWT(jwtService), noteController.FindNotes)
+	r.GET("/notes/:id", middleware.AuthorizeJWT(jwtService), noteController.FindNoteByID)
+	r.POST("/notes", middleware.AuthorizeJWT(jwtService), noteController.CreateNote)
+	r.PUT("/notes/:id", middleware.AuthorizeJWT(jwtService), noteController.UpdateNote)
+	r.DELETE("/notes/:id", middleware.AuthorizeJWT(jwtService), noteController.DeleteNote)
 
 	// Run the server
 	r.Run()
