@@ -63,51 +63,68 @@ export default function Home() {
                     <div className="w-8/12 h-fit flex items-center flex-col bg-slate-50/50 rounded-lg mt-32 mb-16">
                             <h1 className="m-16 md:text-6xl">Developers</h1>
                             <div className="card-group flex pb-10 flex-wrap justify-center">
-                                <div className="card w-60 flex flex-col items-center text-center mx-6 mb-6">
-                                    <div className="shape">
-                                        <div className="circle">
-                                            <Image className="rounded-full" src={carlos}/>
-                                        </div>
-                                    </div>
-                                    <div className="card-body">
-                                        <h3 className="m-4 md:text-2xl">Carlos Martinez</h3>
-                                        <p>Software Developer with a focus on building responsive websites and solving problems.</p>
+                                
+                            <div className="card w-60 flex flex-col items-center text-center mx-6 mb-6">
+                                <div className="shape">
+                                    <div className="circle">
+                                        <Image className="rounded-full" src={carlos}/>
                                     </div>
                                 </div>
-                                <div className="card w-60 flex flex-col items-center text-center mx-6 mb-6">
-                                    <div className="shape">
-                                        <div className="circle">
-                                            <Image className="rounded-full" src={daryl}/>
-                                        </div>
-                                    </div>
-                                    <div className="card-body">
-                                        <h3 className="m-4 md:text-2xl">Daryl Nauman</h3>
-                                        <p>Full-stack web developer with an Executive MBA and leadership experience at post-secondary institutions</p>
-                                    </div>
-                                </div>
-                                <div className="card w-60 flex flex-col items-center text-center mx-6 mb-6">
-                                    <div className="shape">
-                                        <div className="circle">
-                                            <Image className="rounded-full" src={z}/>
-                                        </div>
-                                    </div>
-                                    <div className="card-body">
-                                        <h3 className="m-4 md:text-2xl">Z</h3>
-                                        <p>Web Developer</p>
-                                    </div>
-                                </div>
-                                <div className="card  w-60 flex flex-col items-center text-center mx-6 mb-6">
-                                    <div className="shape">
-                                        <div className="circle">
-                                            <Image className="rounded-full" src={mateo}/>
-                                        </div>
-                                    </div>
-                                    <div className="card-body">
-                                        <h3 className="m-4 md:text-2xl">Mateo Cruz</h3>
-                                        <p>Front End Web Developer with a background in customer service</p>
-                                    </div>
+                                <div className="card-body">
+                                    <h3 className="m-4 md:text-2xl">Carlos Martinez</h3>
+                                    <p>Software Developer with a focus on building responsive websites and solving problems.</p>
+                                    <br/>
+                                    <p>Github:</p>
+                                    <Link href="https://github.com/curlos"><a className="text-blue-700 hover:text-blue-500">https://github.com/curlos</a></Link>
                                 </div>
                             </div>
+                                      
+                            <div className="card w-60 flex flex-col items-center text-center mx-6 mb-6">
+                                <div className="shape">
+                                    <div className="circle">
+                                        <Image className="rounded-full" src={daryl}/>
+                                    </div>
+                                </div>
+                                <div className="card-body">
+                                    <h3 className="m-4 md:text-2xl">Daryl Nauman</h3>
+                                    <p>Full-stack web developer with an Executive MBA and leadership experience at post-secondary institutions</p>
+                                    <br/>
+                                    <p>Github:</p>
+                                    <Link href="https://github.com/darylnauman"><a className="text-blue-700 hover:text-blue-500">https://github.com/darylnauman</a></Link>
+                                </div>
+                            </div>
+  
+                            <div className="card w-60 flex flex-col items-center text-center mx-6 mb-6">
+                                <div className="shape">
+                                    <div className="circle">
+                                        <Image className="rounded-full" src={z}/>
+                                    </div>
+                                </div>
+                                <div className="card-body">
+                                    <h3 className="m-4 md:text-2xl">Z</h3>
+                                    <p>Web Developer</p>
+                                    <br/>
+                                    <p>Github:</p>
+                                    <Link href="https://github.com/zxcv3"><a className="text-blue-700 hover:text-blue-500">https://github.com/zxcv3</a></Link>
+                                </div>
+                            </div>
+
+                            <div className="card w-60 flex flex-col items-center text-center mx-6 mb-6">
+                                <div className="shape">
+                                    <div className="circle">
+                                        <Image className="rounded-full" src={mateo}/>
+                                    </div>
+                                </div>
+                                <div className="card-body">
+                                    <h3 className="m-4 md:text-2xl">Mateo Cruz</h3>
+                                    <p>Front End Web Developer with a background in customer service</p>
+                                    <br/>
+                                    <p>Github:</p>
+                                    <Link href="https://github.com/cruzma"><a className="text-blue-700 hover:text-blue-500">https://github.com/cruzma</a></Link>
+                                </div>
+                            </div>
+                               
+                        </div>
                     </div>
                 </main>
             </div>

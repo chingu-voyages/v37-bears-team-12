@@ -23,28 +23,50 @@ export default function notes() {
         setSubject(e.target.value);
     };
 
-    let url;
+    // let url;
 
+    // useEffect(async () => {
+    //     if (subject === '*') {
+    //         url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?select=*`
+    //     } else {
+    //         url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?subject=eq.${subject}&select=*`
+    //     }
+    //     const res = await fetch(
+    //         url,
+    //         {
+    //             method: "GET",
+    //             headers: {
+    //                 // Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+    //                 apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    //             },
+    //         }
+    //     );
+    //     const response = await res.json();      
+    //     // const data = response.data; // If using Heroku use this line
+    //     console.log(response)
+    //     setNotes(response);
+    // },[subject]);
     useEffect(async () => {
+        let url;
         if (subject === '*') {
-            url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?select=*`
+            url = `https://chingu-notes-app.herokuapp.com/notes`
         } else {
-            url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?subject=eq.${subject}&select=*`
+            url = `https://chingu-notes-app.herokuapp.com/notes?subject=${subject}`
         }
-        const res = await fetch(
+        
+        const response = await fetch(
             url,
             {
                 method: "GET",
                 headers: {
-                    // Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
-                    apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-                },
+                    Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+                }
             }
         );
-        const response = await res.json();      
-        // const data = response.data; // If using Heroku use this line
         console.log(response)
-        setNotes(response);
+        const resJson = await response.json()
+        console.log(resJson.data)
+        setNotes(resJson.data)
     },[subject]);
 
     return (
