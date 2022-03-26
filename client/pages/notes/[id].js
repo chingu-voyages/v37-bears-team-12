@@ -13,6 +13,7 @@ export default function Note() {
     const [loggedIn, setLoggedIn] = useState(false);
     let user_id;
 
+    // Check for token to see if logged in
     useEffect(() => {
         let accessToken = localStorage.getItem("supabase.auth.token");
         if (accessToken === null) {
@@ -24,11 +25,11 @@ export default function Note() {
         }
     }, []);
 
+    // To GET a specific note from the database and update the displayed content
     useEffect(() => {
         const fetchFromAPI = async () => {
             const res = await fetch(
-                `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?id=eq.${id}&select=*`,
-                // `https://chingu-notes-app.herokuapp.com/notes/${id}`,
+                `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?id=eq.${id}`,
                 {
                     method: "GET",
                     headers: {
