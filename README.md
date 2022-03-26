@@ -57,7 +57,7 @@ CoffeeNotes is a full-stack application that allows students to take notes for t
 
 ### Links
 - [GitHub repository](https://github.com/chingu-voyages/v37-bears-team-12)
-- [Deployed application](https://coffee-notes.vercel.app/)
+- [Deployed application](https://coffeenotes.vercel.app/)
 
 <!-- DEVELOPMENT TEAM -->
 ## Development Team
