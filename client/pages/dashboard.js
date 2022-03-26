@@ -13,39 +13,38 @@ export default function dashboard({ data }) {
             window.location.assign("/");
         } else {
             setLoggedIn(true);
-            accessToken = JSON.parse(accessToken);
-            let user_id = accessToken.currentSession.user.id;
         }
     }, []);
 
     useEffect(async () => {
-        let url = `https://chingu-notes-app.herokuapp.com/notes`
+        let url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?select=*`
         const res = await fetch(
             url,
             {
                 method: "GET",
                 headers: {
-                    Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+                    // Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+                    apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
                 },
             }
         );
         const response = await res.json();      
-        const data = response.data;
-        console.log(data)
-        setNotes(data);
+        // const data = response.data; // if using Heroku include this
+        // console.log(response)
+        setNotes(response);
     },[]);
 
     // const notes = data;
-    // let sortedNotes = [];
+    let sortedNotes = [];
 
     // if more than one note, sort notes by created date with newest notes at the start of the array
-    // if (notes.length > 1) {
-    //     sortedNotes = notes.sort(
-    //         (a, b) => new Date(b.created_at) - new Date(a.created_at)
-    //     );
-    // } else {
-    //     sortedNotes = notes;
-    // }
+    if (notes.length > 1) {
+        sortedNotes = notes.sort(
+            (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+    } else {
+        sortedNotes = notes;
+    }
 
     // create an array with only four notes to display on the dashboard
     let recentNotes = [];
@@ -93,18 +92,13 @@ export default function dashboard({ data }) {
 
 // export async function getServerSideProps(context) {
 //     // Fetch data from external API
-//     // let Auth = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNjQ4MjMyODU4LCJzdWIiOiIzZWM1Yjg5ZC0xMjk3LTRhZWMtYTAxNC01NjY0ZGI4ZTgyZjMiLCJlbWFpbCI6ImRhcnlsbmF1bWFuQGdtYWlsLmNvbSIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnt9LCJyb2xlIjoiYXV0aGVudGljYXRlZCJ9.-elq8shhnlPG8c0UZ0YCeR12pWZm5KnO9C-WVnAthWM'
-//     let accessToken = localStorage.getItem("supabase.auth.token");
-//     accessToken = JSON.parse(accessToken);
 
 //     const res = await fetch(
-//         // `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes`,
-//         `https://chingu-notes-app.herokuapp.com/notes`,
+//         // `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?select=*`,
 //         {
 //             method: "GET",
 //             headers: {
-//                 // apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-//                 Authorization: accessToken
+//                  apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 //             },
 //         }
 //     );

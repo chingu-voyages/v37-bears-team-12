@@ -18,6 +18,7 @@ export default function edit({ data, id }) {
     const [loggedIn, setLoggedIn] = useState(false);
     let user_id;
 
+    // check localStorate to see if token is present for logged in user
     useEffect(() => {
         let accessToken = localStorage.getItem("supabase.auth.token");
         if (accessToken === null) {
@@ -29,7 +30,7 @@ export default function edit({ data, id }) {
         }
     }, []);
 
-    console.log("data[0].content:", data[0].content);
+    // console.log("data[0].content:", data[0].content);
 
     useEffect(() => {
         if (quill) {
@@ -56,16 +57,15 @@ export default function edit({ data, id }) {
 
         console.log("data", data);
 
-        // Submit updated data to database
+        // Submit updated data to database (PUT)
         fetch(
-            // `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?id=eq.${id}`,
-            `https://chingu-notes-app.herokuapp.com/notes/${id}`,
+            `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?id=eq.${id}`,
             {
                 method: "PUT",
                 headers: {
                     "Content-type": "application/json",
-                    // apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-                    Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+                    apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                    // Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
                 },
                 body: JSON.stringify(data),
             }
@@ -160,7 +160,7 @@ export async function getServerSideProps(context) {
     const { id } = context.query;
 
     const res = await fetch(
-        `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes?id=eq.${id}&select=*`,
+        `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?id=eq.${id}`,
         {
             method: "GET",
             headers: {
