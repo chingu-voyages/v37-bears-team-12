@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import GreetingDate from "../../components/greetingDate";
@@ -8,48 +7,40 @@ import Link from "next/link";
 export default function Note() {
     const router = useRouter();
     const { id } = router.query;
+
     const [note, setNote] = useState();
-
     const [loggedIn, setLoggedIn] = useState(false);
-    let user_id;
 
-    // Check for token to see if logged in
+    // Check for token to see if logged in then get note
     useEffect(() => {
         let accessToken = localStorage.getItem("supabase.auth.token");
         if (accessToken === null) {
-            window.location.assign("/");
+            router.push("/");
         } else {
             setLoggedIn(true);
-            accessToken = JSON.parse(accessToken);
-            user_id = accessToken.currentSession.user.id;
+            getNote();
         }
     }, []);
 
-    // To GET a specific note from the database and update the displayed content
-    useEffect(() => {
-        const fetchFromAPI = async () => {
+    const getNote = async () => {
+        if (id) {
             const res = await fetch(
-                `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?id=eq.${id}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/${id}`,
                 {
                     method: "GET",
                     headers: {
-                        apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-                        // Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+                        Authorization: JSON.parse(
+                            localStorage.getItem("supabase.auth.token")
+                        ).currentSession["access_token"],
                     },
                 }
             );
-            const data = await res.json();
-            setNote(data[0]);
-
-            let element = document.getElementById("content");
-            let newContent = data[0].content;
-            element.innerHTML = newContent;
-        };
-
-        if (id) {
-            fetchFromAPI();
+            const response = await res.json();
+            setNote(response.data);
+        } else {
+            console.log("no note id");
         }
-    }, [id]);
+    };
 
     return (
         <>
@@ -60,17 +51,24 @@ export default function Note() {
                         <main className="md:w-full bg-cover bg-[url('/images/coffee-notebook.jpg')] min-h-screen">
                             <GreetingDate />
                             <div className="w-11/12 mx-auto text-left text-black bg-white opacity-75 rounded-3xl p-2">
-                                <h1 className="text-2xl">
-                                    {note.title}
-                                </h1>
-                                <Link href={`/notes/edit/${id}`}>
-                                    <a className="text-blue-700 underline">Edit Note</a>
-                                </Link>
+                                <h1 className="text-2xl">{note.title}</h1>
+                                {/* <Link href={`/notes/edit/${id}`}>
+                                    <a className="text-blue-700 underline">
+                                        Edit Note
+                                    </a>
+                                </Link> */}
                             </div>
                             <section className="bg-white w-11/12 opacity-75 rounded-3xl mx-auto my-1 p-2">
-                                <h2 className="font-semibold">Subject: {note.subject}</h2>
-                                <h2 className="font-medium">Date: {new Date(note.created_at).toLocaleDateString("en-US")}</h2>
-                                <div id="content"></div>
+                                <h2 className="font-semibold">
+                                    Subject: {note.subject}
+                                </h2>
+                                <h2 className="font-medium">
+                                    Date:{" "}
+                                    {new Date(
+                                        note.created_at
+                                    ).toLocaleDateString("en-US")}
+                                </h2>
+                                <div id="content">{note.content}</div>
                             </section>
                         </main>
                     </div>

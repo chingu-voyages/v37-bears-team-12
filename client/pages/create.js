@@ -3,8 +3,10 @@ import "quill/dist/quill.snow.css";
 // import 'quill/dist/quill.bubble.css'; // Add css for bubble theme
 import NavBar from "../components/NavBar";
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/router';
 
 export default function create() {
+    const router = useRouter();
     const theme = "snow";
     const [title, setTitle] = useState("");
     const [subject, setSubject] = useState("DEFAULT");
@@ -19,7 +21,7 @@ export default function create() {
     useEffect(() => {
         let accessToken = localStorage.getItem("supabase.auth.token");
         if (accessToken === null) {
-            window.location.assign("/");
+            router.push('/')
         } else {
             setLoggedIn(true);
         }
@@ -39,24 +41,23 @@ export default function create() {
             title: title,
             subject: subject,
             content: content,
-            // user_id: user_id
+            user_id: user_id
         };
 
-        console.log(data);
-
         // Post data to database
-        fetch(`https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2`, {
+        fetch(process.env.NEXT_PUBLIC_API_URL, {
             method: "POST",
             headers: {
                 "Content-type": "application/json",
-                apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-                // Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+                Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
             },
             body: JSON.stringify(data),
         })
             .then((response) => response.json())
             .then((json) => console.log(json))
             .catch((err) => console.log(err));
+            
+        router.push('/dashboard')
     }
 
     return (
