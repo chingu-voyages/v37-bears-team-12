@@ -3,69 +3,87 @@ import "quill/dist/quill.snow.css";
 // import 'quill/dist/quill.bubble.css'; // Add css for bubble theme
 import NavBar from "../../../components/NavBar";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
-export default function edit({ data, id }) {
+export default function edit() {
     const theme = "snow";
-
-    const [note, setNote] = useState(data[0]);
-    const [title, setTitle] = useState(data[0].title);
-    const [subject, setSubject] = useState(data[0].subject);
-    // const [user_id, setUser_id] = useState(data[0].user_id); // Using token for user_id
-    const [created_at, setCreated_at] = useState(data[0].created_at);
-
+    const router = useRouter();
+    let { id } = router.query;
+    
     const { quill, quillRef } = useQuill({ theme });
-
+    
     const [loggedIn, setLoggedIn] = useState(false);
-    let user_id;
-
-    // check localStorate to see if token is present for logged in user
+    const [note, setNote] = useState();
+    const [title, setTitle] = useState();
+    const [subject, setSubject] = useState();
+    
+    // check localStorage to see if token is present if so get note
     useEffect(() => {
         let accessToken = localStorage.getItem("supabase.auth.token");
         if (accessToken === null) {
-            window.location.assign("/");
+            router.push("/");
         } else {
             setLoggedIn(true);
-            accessToken = JSON.parse(accessToken);
-            user_id = accessToken.currentSession.user.id;
+            console.log('id within access_token useEffect', id)
+            getNote(id);
         }
-    }, []);
+    }, [id]);
 
-    // console.log("data[0].content:", data[0].content);
-
-    useEffect(() => {
+    const getNote = async (id) => {
+        if (id) {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/${id}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: JSON.parse(
+                            localStorage.getItem("supabase.auth.token")
+                        ).currentSession["access_token"],
+                    },
+                }
+            );
+            const response = await res.json();
+            setNote(response.data);
+            setQuillContents();
+        } else {
+               console.log("no note id");
+        }
+    };
+    
+    function setQuillContents () {
         if (quill) {
             quill.setContents({
-                ops: [{ insert: data[0].content }],
+                ops: [{ insert: note.content }],
             });
         }
-    });
+    }    
 
     function handleSubmit(e) {
         e.preventDefault();
 
-        let content = quill.getText();
+        // let content = quill.getText();
+        let content = 'This is hard coded content to test a function'
 
         let data = {
             id: id,
-            user_id: user_id,
+            // user_id: user_id,
             title: title,
             content: content,
             subject: subject,
-            created_at: created_at,
-            updated_at: new Date(),
+            // created_at: created_at,
+            // updated_at: new Date(),
         };
 
-        console.log("data", data);
+        console.log("handle submit data", data);
 
         // Submit updated data to database (PUT)
         fetch(
-            `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?id=eq.${id}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/${id}`,
             {
                 method: "PUT",
                 headers: {
                     "Content-type": "application/json",
-                    apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-                    // Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
+                    Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
                 },
                 body: JSON.stringify(data),
             }
@@ -77,16 +95,11 @@ export default function edit({ data, id }) {
 
     return (
         <>
-            {loggedIn && (
+            {loggedIn && note && (
                 <div className="flex flex-col md:flex-row">
                     <NavBar />
                     <main className="w-full h-screen">
-                        {!note ? (
-                            <div>
-                                <h1>Note is loading</h1>
-                            </div>
-                        ) : (
-                            <form
+                            <form 
                                 onSubmit={handleSubmit}
                                 className="h-full w-full relative"
                             >
@@ -95,7 +108,7 @@ export default function edit({ data, id }) {
                                         <input
                                             className="h-full w-full placeholder-shown:text-2xl focus:outline-none"
                                             type="text"
-                                            value={title}
+                                            value={note.title}
                                             onChange={(e) =>
                                                 setTitle(e.target.value)
                                             }
@@ -106,7 +119,7 @@ export default function edit({ data, id }) {
                                         <select
                                             className="h-full w-full text-gray-500 focus:outline-none"
                                             id="subject"
-                                            value={subject || ""}
+                                            value={note.subject || ""}
                                             onChange={(e) =>
                                                 setSubject(e.target.value)
                                             }
@@ -147,29 +160,10 @@ export default function edit({ data, id }) {
                                     Submit
                                 </button>
                             </form>
-                        )}
+                        
                     </main>
                 </div>
             )}
         </>
     );
-}
-
-export async function getServerSideProps(context) {
-    // Fetch data from external API
-    const { id } = context.query;
-
-    const res = await fetch(
-        `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?id=eq.${id}`,
-        {
-            method: "GET",
-            headers: {
-                apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-            },
-        }
-    );
-    const data = await res.json();
-
-    // Pass data to the page via props
-    return { props: { data, id } };
 }
