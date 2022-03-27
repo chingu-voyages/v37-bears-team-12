@@ -56,6 +56,7 @@ export default function notes() {
         setNotes(response.data);
     };
 
+
     return (
         <>
             {loggedIn && (
