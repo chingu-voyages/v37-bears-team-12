@@ -2,39 +2,38 @@ import NoteCard from "../components/noteCard";
 import GreetingDate from "../components/greetingDate";
 import NavBar from "../components/NavBar";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 export default function dashboard({ data }) {
     const [loggedIn, setLoggedIn] = useState(false);
     const [notes, setNotes] = useState([]);
+    const router = useRouter();
 
     useEffect(() => {
         let accessToken = localStorage.getItem("supabase.auth.token");
         if (accessToken === null) {
-            window.location.assign("/");
+            router.push("/");
         } else {
             setLoggedIn(true);
         }
     }, []);
 
     useEffect(async () => {
-        let url = `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?select=*`
-        const res = await fetch(
-            url,
-            {
+        if (loggedIn) {
+            let url = process.env.NEXT_PUBLIC_API_URL;
+            const res = await fetch(url, {
                 method: "GET",
                 headers: {
-                    // Authorization: JSON.parse(localStorage.getItem('supabase.auth.token')).currentSession['access_token']
-                    apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+                    Authorization: JSON.parse(
+                        localStorage.getItem("supabase.auth.token")
+                    ).currentSession["access_token"],
                 },
-            }
-        );
-        const response = await res.json();      
-        // const data = response.data; // if using Heroku include this
-        // console.log(response)
-        setNotes(response);
-    },[]);
+            });
+            const response = await res.json();
+            setNotes(response.data);
+        }
+    });
 
-    // const notes = data;
     let sortedNotes = [];
 
     // if more than one note, sort notes by created date with newest notes at the start of the array
@@ -89,21 +88,3 @@ export default function dashboard({ data }) {
         </>
     );
 }
-
-// export async function getServerSideProps(context) {
-//     // Fetch data from external API
-
-//     const res = await fetch(
-//         // `https://bwnxxxhdcgewlvmpwdkl.supabase.co/rest/v1/notes-v2?select=*`,
-//         {
-//             method: "GET",
-//             headers: {
-//                  apiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-//             },
-//         }
-//     );
-//     const data = await res.json();
-//         console.log(data)
-//     // Pass data to the page via props
-//     return { props: { data } };
-// }
