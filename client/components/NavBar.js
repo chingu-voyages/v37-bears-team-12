@@ -2,19 +2,20 @@ import Link from "next/link";
 import { supabase } from "../utils/supabaseClient";
 import { HomeIcon, DocumentIcon, DocumentAddIcon, InformationCircleIcon, LogoutIcon } from '@heroicons/react/solid'
 import { useState } from "react";
-import { redirect } from "next/dist/server/api-utils";
 import logo from '../public/images/CoffeeNotes-logos.jpeg'
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function NavBar() {
-
+    
+    const router = useRouter();
+    
     const signOut = () => {
         supabase.auth.signOut()
-        window.location.assign('/');
+        router.push("/")
     }
 
     const [toggle, setToggle] = useState(false)
-    
 
     return (
         <aside className="content-between md:w-72 bg-[#A49EA2] ">
